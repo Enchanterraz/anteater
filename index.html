@@ -1,0 +1,1077 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>ANTEATER — Pick. Survive. Mint.</title>
+<meta name="description" content="3,300 tokens, 12 phases. Pick your ant, survive the giant anteater, mint the survivors. Last ant standing wins." />
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Bagel+Fat+One&family=Righteous&family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet" />
+<style>
+:root{
+  --ink:#241b40; --paper:#fffdf8; --paper-2:#f1ead7;
+  --milk:#f6f0e2; --milk-2:#fbf6ea;
+  --sky1:#ffd23f; --sky2:#ff8a3d;
+  --grape:#6c5ce7; --grape-d:#4b3fc4; --pit:#241640;
+  --red:#ff6b5e; --blue:#3aa0ff; --green:#1fb98a; --yellow:#ffc233; --purple:#a55cff; --teal:#10b3a6;
+  --good:#1fb98a; --bad:#ff6b5e;
+  --disp:'Righteous',cursive; --body:'Space Grotesk',sans-serif; --fancy:'Bagel Fat One',cursive;
+  --head:#7c6cf0;
+  --sh:4px 4px 0 var(--ink); --sh-lg:6px 6px 0 var(--ink);
+}
+*{margin:0;padding:0;box-sizing:border-box}
+html{background:#f3eefc}
+body{font-family:var(--body);font-weight:500;color:var(--ink);min-height:100vh;overflow-x:hidden;
+  background:
+    radial-gradient(60% 55% at 18% 12%, rgba(150,134,236,.30), transparent 70%),
+    radial-gradient(55% 50% at 86% 22%, rgba(255,168,196,.28), transparent 70%),
+    radial-gradient(60% 55% at 70% 96%, rgba(140,196,236,.28), transparent 72%),
+    radial-gradient(45% 40% at 35% 70%, rgba(255,214,170,.22), transparent 70%),
+    linear-gradient(165deg,#f4effc, #fdeef2 48%, #ecf3fc);
+  background-attachment:fixed;}
+.wrap{max-width:1040px;margin:0 auto;padding:0 20px 110px}
+#antfield{position:fixed;inset:0;z-index:2;pointer-events:none;overflow:hidden;opacity:.5}
+#antfield .crawler{position:absolute;will-change:transform;opacity:.5}
+#antfield .crawler svg{width:30px;height:30px;display:block}
+@media(max-width:780px){#antfield .crawler svg{width:22px;height:22px}}
+
+.topbar{display:flex;justify-content:space-between;align-items:center;padding:18px 0}
+.brand{font-family:var(--disp);font-size:22px;color:var(--ink);display:flex;align-items:center;gap:8px;letter-spacing:.02em}
+.brand .dot{width:14px;height:14px;background:var(--red);border:3px solid var(--ink);border-radius:50%}
+.top-links{display:flex;align-items:center;gap:12px}
+.lk{width:40px;height:40px;display:grid;place-items:center;background:var(--paper);border:3px solid var(--ink);
+  border-radius:12px;box-shadow:var(--sh);color:var(--ink);text-decoration:none;font-weight:700;transition:.1s}
+.lk:hover{transform:translate(-1px,-1px);box-shadow:5px 5px 0 var(--ink)}
+.lk:active{transform:translate(4px,4px);box-shadow:0 0 0 var(--ink)}
+.btn-chunk{font-family:var(--body);font-weight:700;background:var(--grape);color:#fff;border:3px solid var(--ink);
+  border-radius:14px;box-shadow:var(--sh);padding:11px 18px;cursor:pointer;font-size:14px;transition:.1s;letter-spacing:.02em}
+.btn-chunk:hover:not(:disabled){transform:translate(-1px,-1px);box-shadow:5px 5px 0 var(--ink)}
+.btn-chunk:active:not(:disabled){transform:translate(4px,4px);box-shadow:0 0 0 var(--ink)}
+.btn-chunk:disabled{opacity:.5;cursor:not-allowed}
+.btn-chunk.connected{background:var(--paper);color:var(--ink)}
+
+.hero{text-align:center;padding:30px 0 6px}
+.hero h1{font-family:var(--fancy),cursive;font-size:clamp(48px,11vw,116px);line-height:1.04;letter-spacing:.01em;margin:0;padding:.1em .12em .04em;
+  background:linear-gradient(135deg,#8a78f0 0%, #c08be0 38%, #f3a0c0 66%, #ffc59a 100%);
+  -webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;color:transparent;
+  -webkit-text-stroke:2px rgba(36,27,64,.55);
+  filter:drop-shadow(0 8px 22px rgba(124,108,240,.35)) drop-shadow(0 2px 0 rgba(255,255,255,.6));
+  animation:bob 3.4s ease-in-out infinite;will-change:transform}
+@keyframes bob{0%,100%{transform:translateY(0) rotate(-.6deg)}50%{transform:translateY(-12px) rotate(.6deg)}}
+@media(prefers-reduced-motion:reduce){.hero h1{animation:none}}
+.hero .sub{display:inline-block;margin-top:16px;background:var(--ink);color:#fff;font-weight:600;padding:8px 18px;border-radius:30px;font-size:14px;letter-spacing:.02em}
+.hero .sub b{color:var(--sky1)}
+
+.warn{display:none;margin:18px auto 0;max-width:600px;background:#fff;border:3px solid var(--bad);border-radius:14px;box-shadow:var(--sh);color:var(--bad);font-weight:600;padding:12px 16px;text-align:center;font-size:13px}
+.warn.show{display:block}
+.pausebar{display:none;margin:18px auto 0;max-width:560px;background:var(--ink);color:var(--sky1);border-radius:14px;padding:12px 18px;text-align:center;font-weight:700;letter-spacing:.04em}
+.pausebar.show{display:block}
+
+.score{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-top:30px}
+.score .cell{background:var(--paper);border:3px solid var(--ink);border-radius:16px;box-shadow:var(--sh);padding:14px 12px;text-align:center}
+.score .k{font-size:10px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:var(--grape)}
+.score .v{font-family:var(--disp);font-size:30px;margin-top:4px;line-height:1}
+.score .v.red{color:var(--red)} .score .v.grape{color:var(--grape)}
+.barwrap{margin-top:12px;background:var(--paper);border:3px solid var(--ink);border-radius:16px;box-shadow:var(--sh);padding:12px 16px}
+.bar{height:14px;background:var(--paper-2);border:2px solid var(--ink);border-radius:10px;overflow:hidden;position:relative}
+.bar i{position:absolute;inset:0 auto 0 0;width:0;background:repeating-linear-gradient(45deg,var(--red),var(--red) 8px,var(--yellow) 8px,var(--yellow) 16px);transition:width 1s}
+.barlbl{display:flex;justify-content:space-between;font-size:11px;font-weight:700;margin-top:7px;color:var(--ink)}
+
+.feed{margin-top:14px;background:var(--paper);border:3px solid var(--ink);border-radius:18px;box-shadow:var(--sh);padding:12px 14px}
+.feed-head{font-family:var(--disp);font-size:13px;letter-spacing:.04em;display:flex;align-items:center;gap:8px;margin-bottom:10px}
+.live-dot{width:9px;height:9px;border-radius:50%;background:var(--good);box-shadow:0 0 0 0 rgba(31,185,138,.6);animation:pulse 1.8s infinite}
+@keyframes pulse{0%{box-shadow:0 0 0 0 rgba(31,185,138,.55)}70%{box-shadow:0 0 0 8px rgba(31,185,138,0)}100%{box-shadow:0 0 0 0 rgba(31,185,138,0)}}
+.feed-row{display:flex;gap:10px;overflow-x:auto;padding-bottom:4px}
+.feed-empty{font-weight:600;font-size:13px;color:var(--grape);padding:6px 2px}
+.feed-item{flex:0 0 auto;width:62px;text-align:center}
+.feed-item .ft{width:62px;height:62px;border-radius:12px;overflow:hidden;border:3px solid var(--good);position:relative;background:var(--paper-2);box-shadow:var(--sh)}
+.feed-item .ft img{width:100%;height:100%;object-fit:cover;image-rendering:pixelated;display:block}
+.feed-item .ft .fchk{position:absolute;top:3px;right:3px;width:16px;height:16px;border-radius:50%;background:var(--good);color:#fff;font-size:10px;font-weight:800;display:flex;align-items:center;justify-content:center;border:2px solid #fff}
+.feed-item .fid{font-size:10px;font-weight:700;margin-top:4px;color:var(--ink)}
+.feed-item.pop{animation:popin .5s ease}
+@keyframes popin{from{transform:scale(.4) translateY(-8px);opacity:0}to{transform:scale(1) translateY(0);opacity:1}}
+
+.stage{margin-top:22px;background:var(--paper);border:4px solid var(--ink);border-radius:24px;box-shadow:var(--sh-lg);padding:26px 24px}
+.stage-head{display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:10px}
+.pname{font-family:var(--disp);font-size:26px;color:var(--ink)}
+.ptag{font-weight:700;font-size:12px;letter-spacing:.06em;text-transform:uppercase;padding:6px 12px;border-radius:20px;border:3px solid var(--ink)}
+.ptag.free{background:var(--yellow)} .ptag.game{background:var(--red);color:#fff} .ptag.public{background:var(--green);color:#fff}
+.statusline{margin:10px 0 18px;font-weight:600;font-size:15px;color:var(--ink)}
+.statusline b{color:var(--red)}
+.timer{font-family:var(--disp);font-size:15px;background:var(--ink);color:var(--sky1);padding:2px 10px;border-radius:8px;display:inline-block}
+
+.ant-grid{display:grid;grid-template-columns:repeat(5,1fr);gap:12px}
+.ant-card{background:var(--paper-2);border:3px solid var(--ink);border-radius:18px;padding:12px 8px 10px;text-align:center;cursor:pointer;transition:.1s;position:relative;box-shadow:var(--sh)}
+.ant-card:hover:not(.dis){transform:translate(-2px,-2px);box-shadow:6px 6px 0 var(--ink)}
+.ant-card.mine{outline:4px solid var(--good);outline-offset:2px}
+.ant-card.dis{cursor:not-allowed;opacity:.6}
+.ant-card svg{width:64px;height:64px;display:block;margin:0 auto}
+.ant-nm{font-family:var(--disp);font-size:12px;margin-top:6px}
+.ant-ct{font-weight:700;font-size:18px} .ant-cap{font-size:10px;color:var(--grape);font-weight:700}
+.ant-bar{height:7px;background:#fff;border:2px solid var(--ink);border-radius:6px;overflow:hidden;margin-top:6px}
+.ant-bar i{display:block;height:100%;width:0}
+.chip-badge{position:absolute;top:-12px;left:50%;transform:translateX(-50%);font-family:var(--disp);font-size:9px;padding:3px 8px;border-radius:10px;border:2px solid var(--ink);white-space:nowrap}
+.chip-badge.you{background:var(--good);color:#fff}
+
+.go{display:block;width:100%;font-family:var(--disp);font-size:18px;color:#fff;background:var(--red);border:4px solid var(--ink);border-radius:18px;box-shadow:var(--sh-lg);padding:16px;cursor:pointer;margin-top:18px;transition:.1s;letter-spacing:.02em}
+.go:hover:not(:disabled){transform:translate(-2px,-2px);box-shadow:8px 8px 0 var(--ink)}
+.go:active:not(:disabled){transform:translate(6px,6px);box-shadow:0 0 0 var(--ink)}
+.go.mint{background:var(--green)} .go.free{background:var(--yellow);color:var(--ink)}
+.go:disabled{opacity:.5;cursor:not-allowed;box-shadow:var(--sh)}
+.note{text-align:center;margin-top:12px;font-weight:600;font-size:14px}
+.note .ok{color:var(--good)} .note .err{color:var(--bad)}
+
+.pit{background:linear-gradient(180deg,#3a2566,var(--pit));border:4px solid var(--ink);border-radius:22px;padding:20px;position:relative;overflow:hidden;min-height:200px}
+.pit::after{content:"";position:absolute;left:0;right:0;bottom:0;height:34px;background:#160d2e;border-top:3px dashed rgba(255,255,255,.15)}
+.pit-title{font-family:var(--disp);color:#fff;font-size:14px;text-align:center;letter-spacing:.1em;margin-bottom:10px}
+.arena{display:flex;align-items:flex-end;justify-content:center;gap:18px;position:relative;z-index:2;min-height:120px;flex-wrap:wrap}
+.beast{position:relative;z-index:3}
+.beast svg{width:120px;height:96px;filter:drop-shadow(3px 3px 0 rgba(0,0,0,.4))}
+.beast.chomp{animation:chomp .28s ease-in-out}
+@keyframes chomp{0%,100%{transform:scale(1) rotate(0)}50%{transform:scale(1.12) rotate(-5deg)}}
+.contestant{text-align:center;transition:.2s;position:relative;z-index:2}
+.contestant svg{width:56px;height:56px}
+.contestant .cn{font-family:var(--disp);font-size:10px;color:#fff;margin-top:2px}
+.contestant.gulp{animation:gulp .7s cubic-bezier(.5,-0.3,.7,.4) forwards}
+@keyframes gulp{60%{transform:translateY(-12px) rotate(10deg)}100%{transform:translate(-180px,10px) scale(.05) rotate(80deg);opacity:0}}
+.contestant.win{animation:winhop .5s infinite alternate}
+@keyframes winhop{from{transform:translateY(0)}to{transform:translateY(-14px)}}
+.crown-pop{position:absolute;top:-26px;left:50%;transform:translateX(-50%);font-size:22px;opacity:0}
+.contestant.win .crown-pop{opacity:1;animation:pop .4s}
+@keyframes pop{from{transform:translateX(-50%) scale(0)}to{transform:translateX(-50%) scale(1)}}
+
+.keeper{margin-top:22px;background:var(--paper-2);border:3px dashed var(--ink);border-radius:16px;padding:16px 18px}
+.keeper h4{font-family:var(--disp);font-size:12px;letter-spacing:.06em;margin-bottom:6px}
+.keeper p{font-size:13px;font-weight:600;margin-bottom:12px}
+.keeper .btn-chunk{background:var(--ink)}
+
+.rules{margin-top:48px}
+.rules h3{font-family:var(--fancy),cursive;font-size:32px;color:var(--head);text-shadow:0 4px 14px rgba(124,108,240,.30);margin-bottom:18px;text-align:center;letter-spacing:.01em}
+.rcards{display:grid;grid-template-columns:repeat(3,1fr);gap:16px}
+.rcard{background:var(--paper);border:3px solid var(--ink);border-radius:18px;box-shadow:var(--sh);padding:18px}
+.rcard .n{font-family:var(--disp);font-size:34px;color:var(--red)}
+.rcard p{font-size:13px;font-weight:500;line-height:1.6;margin-top:6px}
+.rcard b{font-weight:700}
+
+.details{margin-top:40px}
+.details h3{font-family:var(--fancy),cursive;font-size:32px;color:var(--head);text-shadow:0 4px 14px rgba(124,108,240,.30);margin-bottom:18px;text-align:center;letter-spacing:.01em}
+.dgrid{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+.dcard{background:var(--paper);border:3px solid var(--ink);border-radius:18px;box-shadow:var(--sh);padding:18px 20px}
+.dcard h4{font-family:var(--disp);font-size:14px;margin-bottom:12px}
+.ladder{width:100%;border-collapse:collapse;font-size:13px;font-weight:600}
+.ladder th{text-align:left;font-size:10px;letter-spacing:.1em;text-transform:uppercase;color:var(--grape);padding:6px 6px;border-bottom:2px solid var(--ink)}
+.ladder td{padding:6px 6px;border-bottom:1px solid rgba(28,19,64,.12)}
+.ladder tr.free td{color:#b07a00} .ladder tr.public td{color:var(--green)}
+.ladder td:last-child{font-family:var(--disp);font-size:12px}
+.fine{font-size:11px;font-weight:500;color:var(--grape);margin-top:10px;line-height:1.5}
+.facts{list-style:none}
+.facts li{display:flex;justify-content:space-between;gap:10px;padding:7px 0;border-bottom:1px solid rgba(28,19,64,.1);font-size:13px}
+.facts li b{font-weight:700} .facts li span{font-weight:600;text-align:right;color:#4a3a8a}
+.fairnote{margin-top:16px;background:var(--ink);color:#fff;border-radius:16px;padding:16px 20px;font-weight:600;font-size:13px;line-height:1.6;text-align:center}
+
+.gallery{margin-top:46px}
+.gallery h3{font-family:var(--fancy),cursive;font-size:32px;color:var(--head);text-shadow:0 4px 14px rgba(124,108,240,.30);text-align:center;letter-spacing:.01em}
+.gsub{text-align:center;font-weight:600;font-size:13px;color:var(--ink);margin:8px 0 18px}
+.ggrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(76px,1fr));gap:6px}
+.gthumb{aspect-ratio:1/1;border:3px solid var(--ink);border-radius:10px;overflow:hidden;background:var(--paper-2);cursor:pointer;
+  box-shadow:2px 2px 0 var(--ink);transition:transform .1s;position:relative}
+.gthumb:hover{transform:translate(-1px,-1px);box-shadow:4px 4px 0 var(--ink)}
+.gthumb img{width:100%;height:100%;object-fit:cover;display:block;image-rendering:pixelated}
+.gthumb .gid{position:absolute;bottom:0;left:0;right:0;background:rgba(28,19,64,.78);color:#fff;font-size:9px;font-weight:700;text-align:center;padding:1px 0}
+.gthumb .tick{position:absolute;top:4px;right:4px;width:18px;height:18px;border-radius:50%;background:var(--good);color:#fff;
+  font-size:11px;font-weight:800;display:none;align-items:center;justify-content:center;border:2px solid #fff;box-shadow:0 1px 4px rgba(0,0,0,.3);line-height:1}
+.gthumb.minted .tick{display:flex}
+.gthumb.minted img{opacity:.62;filter:saturate(.85)}
+.gthumb.minted{border-color:var(--good)}
+.gcount{text-align:center;font-weight:600;font-size:12px;color:var(--ink);margin-top:14px}
+
+.lightbox{position:fixed;inset:0;z-index:90;display:none;align-items:center;justify-content:center;background:rgba(28,19,64,.92);padding:20px}
+.lightbox.show{display:flex}
+.lbcard{background:var(--paper);border:4px solid var(--ink);border-radius:22px;box-shadow:var(--sh-lg);padding:16px;max-width:440px;width:100%;text-align:center}
+.lbcard img{width:100%;border:3px solid var(--ink);border-radius:14px;image-rendering:pixelated;background:var(--paper-2)}
+.lbcard h4{font-family:var(--disp);font-size:20px;margin:12px 0 4px}
+.lbcard a{font-weight:700;color:var(--grape);text-decoration:none;font-size:13px}
+.lbclose{margin-top:12px}
+
+footer{margin-top:48px;display:flex;justify-content:space-between;flex-wrap:wrap;gap:10px;font-weight:600;font-size:12px;color:var(--ink)}
+footer a{color:var(--ink);font-weight:700}
+footer .fl{display:flex;gap:16px}
+
+.toast{position:fixed;bottom:22px;left:50%;transform:translateX(-50%) translateY(20px);z-index:80;background:var(--ink);color:#fff;font-weight:600;border-radius:14px;padding:13px 20px;box-shadow:var(--sh);opacity:0;pointer-events:none;transition:.25s;max-width:88vw;font-size:13px}
+.toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
+.toast.err{background:var(--bad)}
+
+@media(max-width:780px){
+  .score{grid-template-columns:repeat(2,1fr)}
+  .ant-grid{grid-template-columns:repeat(5,1fr);gap:6px}.ant-card{padding:8px 4px}.ant-card svg{width:44px;height:44px}.ant-nm{font-size:9px}
+  .rcards{grid-template-columns:1fr}
+  .dgrid{grid-template-columns:1fr}
+  .arena{gap:8px}.contestant svg{width:40px;height:40px}.beast svg{width:80px;height:64px}
+}
+/* ───────── Customize Studio ───────── */
+.studio{margin-top:48px;background:var(--paper);border:3px solid var(--ink);border-radius:22px;box-shadow:var(--sh-lg);padding:22px}
+.studio > h3{font-family:var(--fancy),cursive;font-size:32px;color:var(--head);text-shadow:0 4px 14px rgba(124,108,240,.30);text-align:center;letter-spacing:.01em}
+.studio-note{font-size:13px;font-weight:600;text-align:center;max-width:640px;margin:8px auto 18px;color:var(--ink);opacity:.8}
+.studio-note b{color:var(--grape)}
+#studioConnect{text-align:center;padding:14px 0}
+#studioMsg{font-size:13px;font-weight:600;margin-top:10px;color:var(--grape);min-height:18px}
+.studio-grid{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1.1fr);gap:22px}
+@media(max-width:760px){.studio-grid{grid-template-columns:1fr}}
+.studio-left{display:flex;flex-direction:column;gap:12px}
+#studioCanvas{width:100%;aspect-ratio:1/1;border:3px solid var(--ink);border-radius:16px;background:var(--paper-2);box-shadow:var(--sh);image-rendering:pixelated;touch-action:none}
+.studio-tokens{display:flex;gap:8px;overflow-x:auto;padding-bottom:4px;min-height:8px}
+.stoken{flex:0 0 auto;width:54px;height:54px;border-radius:10px;overflow:hidden;border:3px solid var(--ink);cursor:pointer;position:relative;background:var(--paper-2)}
+.stoken img{width:100%;height:100%;object-fit:cover;image-rendering:pixelated;display:block}
+.stoken.sel{border-color:var(--grape);box-shadow:0 0 0 3px rgba(124,108,240,.35)}
+.stoken .sn{position:absolute;bottom:0;left:0;right:0;background:rgba(36,27,64,.8);color:#fff;font-size:8px;font-weight:700;text-align:center}
+.studio-actions{display:flex;gap:8px;flex-wrap:wrap}
+.studio-actions button{flex:1;min-width:120px;font-family:var(--disp);font-size:13px;border:3px solid var(--ink);border-radius:12px;padding:10px;cursor:pointer;box-shadow:var(--sh);background:var(--grape);color:#fff}
+.studio-actions #dlBtn{background:var(--good)}
+.studio-actions #resetBtn{background:var(--paper);color:var(--ink)}
+.studio-actions button:active{transform:translate(2px,2px);box-shadow:2px 2px 0 var(--ink)}
+.studio-right{display:flex;flex-direction:column;gap:10px;min-width:0}
+.studio-tabs{display:flex;gap:6px;flex-wrap:wrap}
+.stab{font-family:var(--disp);font-size:12px;border:3px solid var(--ink);border-radius:10px;padding:7px 11px;cursor:pointer;background:var(--paper);color:var(--ink)}
+.stab.on{background:var(--ink);color:#fff}
+.spanel{display:none}
+.spanel.on{display:block}
+.trait-row{margin-bottom:12px}
+.trait-row .lbl{font-family:var(--disp);font-size:11px;letter-spacing:.04em;margin-bottom:6px;color:var(--ink)}
+.opts{display:flex;gap:7px;overflow-x:auto;padding-bottom:6px}
+.opt{flex:0 0 auto;width:52px;height:52px;border-radius:10px;overflow:hidden;border:3px solid var(--ink);cursor:pointer;background:var(--paper-2)}
+.opt img{width:100%;height:100%;object-fit:cover;image-rendering:pixelated;display:block}
+.opt.sel{border-color:var(--grape);box-shadow:0 0 0 3px rgba(124,108,240,.35)}
+.ctrl{display:flex;align-items:center;gap:10px;margin:9px 0;font-size:12px;font-weight:600}
+.ctrl label{flex:0 0 92px;color:var(--ink)}
+.ctrl input[type=range]{flex:1;accent-color:var(--grape)}
+.preset-row,.frame-row,.sticker-row{display:flex;gap:7px;flex-wrap:wrap;margin-top:6px}
+.chip{font-size:12px;font-weight:700;border:3px solid var(--ink);border-radius:10px;padding:6px 10px;cursor:pointer;background:var(--paper)}
+.chip.on{background:var(--grape);color:#fff}
+.sticker-btn{font-size:22px;border:3px solid var(--ink);border-radius:10px;padding:3px 7px;cursor:pointer;background:var(--paper);line-height:1.3}
+.studio-field{display:flex;align-items:center;gap:8px;margin:8px 0;font-size:12px;font-weight:600}
+.studio-field input[type=text]{flex:1;border:3px solid var(--ink);border-radius:10px;padding:8px;font-family:var(--body);font-weight:600}
+.studio-field input[type=color]{width:38px;height:34px;border:3px solid var(--ink);border-radius:8px;background:none;cursor:pointer}
+.hint{font-size:11px;opacity:.7;margin-top:4px}
+
+</style>
+</head>
+<body>
+<div id="antfield" aria-hidden="true"></div>
+<div class="wrap">
+  <div class="topbar">
+    <span class="brand"><span class="dot"></span>ANTEATER</span>
+    <span class="top-links">
+      <a class="lk" href="#studio" title="Customize your ANT" aria-label="Customize" style="font-size:18px">🎨</a>
+      <a class="lk" href="https://x.com/surviveanteater" target="_blank" rel="noopener" aria-label="X / Twitter">𝕏</a>
+      <a class="lk" id="osLink" href="#" target="_blank" rel="noopener">🌊</a>
+      <button class="lk" id="soundBtn" title="Toggle colony sound" aria-label="Toggle colony sound">🔇</button>
+      <button class="btn-chunk" id="connectBtn">Connect</button>
+    </span>
+  </div>
+
+  <section class="hero">
+    <h1 class="bouncy">ANTEATER</h1>
+    <div class="sub">3,300 ANTEATERS · mint complete · <b>customize yours below</b></div>
+    <div class="warn" id="cfgWarn">⚠ Paste your deployed CONTRACT_ADDRESS into this file — the site is read-only until then.</div>
+    <div class="pausebar" id="pauseBar">⏸ GAME PAUSED BY THE TEAM — BACK SOON</div>
+  </section>
+
+  <section class="studio" id="studio">
+    <h3>Customize your ANT</h3>
+    <p class="studio-note">Make a custom version of an ANTEATER you own — swap traits, add effects, frames &amp; stickers, then download or share to X. <b>This creates a personal image and does not change your on-chain NFT.</b></p>
+
+    <div id="studioConnect">
+      <button class="btn-chunk" id="studioLoadBtn">Connect &amp; load my ANTs</button>
+      <div id="studioMsg"></div>
+    </div>
+
+    <div id="studioMain" style="display:none">
+      <div class="studio-grid">
+        <div class="studio-left">
+          <canvas id="studioCanvas" width="512" height="512"></canvas>
+          <div class="studio-tokens" id="studioTokens"></div>
+          <div class="studio-actions">
+            <button id="dlBtn">⬇ Download PNG</button>
+            <button id="shareBtn">𝕏 Share</button>
+            <button id="resetBtn">↺ Reset</button>
+          </div>
+        </div>
+        <div class="studio-right">
+          <div class="studio-tabs">
+            <div class="stab on" data-tab="traits">Traits</div>
+            <div class="stab" data-tab="effects">Effects</div>
+            <div class="stab" data-tab="frame">Frame</div>
+            <div class="stab" data-tab="text">Text</div>
+            <div class="stab" data-tab="stickers">Stickers</div>
+          </div>
+
+          <div class="spanel on" data-panel="traits" id="panelTraits"></div>
+
+          <div class="spanel" data-panel="effects">
+            <div class="ctrl"><label>Hue</label><input type="range" id="fxHue" min="0" max="360" value="0"></div>
+            <div class="ctrl"><label>Saturation</label><input type="range" id="fxSat" min="0" max="300" value="100"></div>
+            <div class="ctrl"><label>Brightness</label><input type="range" id="fxBri" min="40" max="180" value="100"></div>
+            <div class="ctrl"><label>Contrast</label><input type="range" id="fxCon" min="40" max="220" value="100"></div>
+            <div class="ctrl"><label>Invert</label><input type="range" id="fxInv" min="0" max="100" value="0"></div>
+            <div class="preset-row">
+              <span class="chip" data-fx="reset">None</span>
+              <span class="chip" data-fx="neon">Neon</span>
+              <span class="chip" data-fx="dream">Dream</span>
+              <span class="chip" data-fx="mono">Mono</span>
+              <span class="chip" data-fx="vapor">Vapor</span>
+              <span class="chip" data-fx="gold">Gold</span>
+            </div>
+          </div>
+
+          <div class="spanel" data-panel="frame">
+            <div class="frame-row">
+              <span class="chip on" data-frame="none">None</span>
+              <span class="chip" data-frame="solid">Solid</span>
+              <span class="chip" data-frame="round">Rounded</span>
+              <span class="chip" data-frame="glow">Glow</span>
+              <span class="chip" data-frame="dashed">Dashed</span>
+            </div>
+            <div class="studio-field"><label>Frame color</label><input type="color" id="frameColor" value="#7c6cf0"></div>
+          </div>
+
+          <div class="spanel" data-panel="text">
+            <div class="studio-field"><input type="text" id="capText" placeholder="Add a caption…" maxlength="40"><input type="color" id="capColor" value="#ffffff"></div>
+            <div class="ctrl"><label>Size</label><input type="range" id="capSize" min="20" max="80" value="44"></div>
+            <div class="frame-row">
+              <span class="chip on" data-pos="bottom">Bottom</span>
+              <span class="chip" data-pos="top">Top</span>
+              <span class="chip" data-pos="mid">Middle</span>
+            </div>
+            <div class="hint">Tip: tap a sticker to add it, then drag it on the canvas.</div>
+          </div>
+
+          <div class="spanel" data-panel="stickers">
+            <div class="sticker-row" id="stickerPalette"></div>
+            <div class="ctrl"><label>Size</label><input type="range" id="stkSize" min="30" max="160" value="80"></div>
+            <div class="frame-row"><span class="chip" id="stkRemove">Remove last</span><span class="chip" id="stkClear">Clear all</span></div>
+            <div class="hint">Drag stickers on the canvas to reposition.</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="score">
+    <div class="cell"><div class="k">Minted</div><div class="v" id="sMinted">—</div></div>
+    <div class="cell"><div class="k">Left</div><div class="v red" id="sRemaining">—</div></div>
+    <div class="cell"><div class="k">Public pool</div><div class="v grape" id="sPool">—</div></div>
+    <div class="cell"><div class="k">Phase</div><div class="v" id="sPhase">—</div></div>
+  </section>
+  <div class="barwrap">
+    <div class="bar"><i id="pFill"></i></div>
+    <div class="barlbl"><span id="pPct">0% minted</span><span>MAX 3,300</span></div>
+  </div>
+
+  <section class="feed" id="feedWrap">
+    <div class="feed-head"><span class="live-dot"></span> Latest mints</div>
+    <div class="feed-row" id="mintFeed"><span class="feed-empty">No mints yet — be the first ant in the colony!</span></div>
+  </section>
+
+  <section class="stage">
+    <div class="stage-head">
+      <span class="pname" id="pname">Loading…</span>
+      <span class="ptag" id="ptag" style="display:none"></span>
+    </div>
+    <div class="statusline" id="statusline">Waking the colony…</div>
+    <div id="body"></div>
+    <div class="keeper" id="keeper" style="display:none">
+      <h4>⚙ Keep the game moving</h4>
+      <p id="keeperMsg"></p>
+      <button class="btn-chunk" id="keeperBtn">Advance</button>
+    </div>
+  </section>
+
+  <section class="rules">
+    <h3>How to play</h3>
+    <div class="rcards">
+      <div class="rcard"><div class="n">01</div><p><b>Phase 1 is free.</b> Open to everyone, 1 per wallet. Then 10 game phases, then a public phase for leftovers.</p></div>
+      <div class="rcard"><div class="n">02</div><p><b>Pick 1 of 5 ants</b> in the 5-min window (300 wallets max each). The giant anteater eats four — <b>last ant standing wins.</b></p></div>
+      <div class="rcard"><div class="n">03</div><p><b>Survive & mint.</b> Backers of the winning ant mint for 3 min. Each phase +0.00005 ETH; public phase clears the rest.</p></div>
+    </div>
+  </section>
+
+  <section class="details">
+    <h3>The details</h3>
+    <div class="dgrid">
+      <div class="dcard">
+        <h4>Phase &amp; price schedule</h4>
+        <table class="ladder">
+          <thead><tr><th>Phase</th><th>Type</th><th>Price</th></tr></thead>
+          <tbody id="ladderBody"></tbody>
+        </table>
+        <p class="fine">Each phase mints up to 300. Anything unminted rolls into the public phase. 1 mint per wallet per phase.</p>
+      </div>
+      <div class="dcard">
+        <h4>Key facts</h4>
+        <ul class="facts">
+          <li><b>Supply</b><span>3,300</span></li>
+          <li><b>Phases</b><span>12 (free + 10 game + public)</span></li>
+          <li><b>Per wallet</b><span>1 per phase</span></li>
+          <li><b>Ants per game</b><span>5 · 300 wallets each</span></li>
+          <li><b>Selection window</b><span>5 minutes</span></li>
+          <li><b>Mint window</b><span>3 min (free phase 15 min)</span></li>
+          <li><b>Gap between phases</b><span>3 minutes</span></li>
+          <li><b>Randomness</b><span>On-chain commit-reveal (block hash)</span></li>
+          <li><b>Token standard</b><span>ERC-721C</span></li>
+          <li><b>Royalty</b><span>7% (enforced on-chain)</span></li>
+          <li><b>Network</b><span>Ethereum Mainnet</span></li>
+        </ul>
+      </div>
+    </div>
+    <p class="fairnote">🎲 The surviving ant is decided by a future block&rsquo;s hash, committed the moment selection closes — unknowable in advance, drawn only from ants that have backers. Nobody, not even the team, can rig which ant wins.</p>
+  </section>
+
+  <section class="gallery">
+    <h3>The colony — all 3,300</h3>
+    <p class="gsub">Every ant in the collection. Tap any one to see it bigger.</p>
+    <div class="ggrid" id="ggrid"></div>
+    <div id="gsentinel" style="height:1px"></div>
+    <p class="gcount" id="gcount"></p>
+  </section>
+
+
+  <footer>
+    <span>ANTEATER · ERC-721C · 7% royalty</span>
+    <span class="fl">
+      <a href="https://x.com/surviveanteater" target="_blank" rel="noopener">X / @surviveanteater ↗</a>
+      <a id="osLink2" href="#" target="_blank" rel="noopener">OpenSea ↗</a>
+      <a id="scanLink" href="#" target="_blank" rel="noopener">Contract ↗</a>
+    </span>
+  </footer>
+</div>
+<div class="lightbox" id="lightbox">
+  <div class="lbcard">
+    <img id="lbimg" alt="" />
+    <h4 id="lbtitle"></h4>
+    <a id="lblink" href="#" target="_blank" rel="noopener">View on OpenSea ↗</a>
+    <div><button class="btn-chunk lbclose" id="lbclose">Close</button></div>
+  </div>
+</div>
+<div class="toast" id="toast"></div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/ethers/6.13.2/ethers.umd.min.js"></script>
+<script>
+/* fallback if the primary CDN is blocked/slow in some regions */
+if (typeof ethers === "undefined") {
+  document.write('<script src="https://cdn.jsdelivr.net/npm/ethers@6.13.2/dist/ethers.umd.min.js"><\/script>');
+}
+</script>
+<script>
+window.LAYERS={"Background":[{"name":"BG1","uri":"data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAgAAAAIACAYAAAD0eNT6AAAG30lEQVR42u3WMREAMAgAsVKfNdI7tIMJNhIJP33kf3UAgFWuBABgAAAAAwAAGAAAwAAAAAYAADAAAIABAAAMAABgAAAAAwAAGAAAwAAAAAYAADAAAIABAAAMAABgAADAAAAABgAAMAAAgAEAAAwAAGAAAAADAAAYAADAAAAABgAAMAAAgAEAAAwAAGAAAAADAAAYAADAAACAAQAADAAAYAAAAAMAABgAAMAAAAAGAAAwAACAAQAADAAAYAAAAAMAABgAAMAAAAAGAAAwAACAAQAAAwAAGAAAwAAAAAYAADAAAIABAAAMAABgAAAAAwAAGAAAwAAAAAYAADAAAIABAAAMAABgAAAAAwAABgAAMAAAgAEAAAwAAGAAAAADAAAYAADAAAAABgAAMAAAgAEAAAwAAGAAAAADAAAYAADAAAAABgAADIAEAGAAAAADAAAYAADAAAAABgAAMAAAgAEAAAwAAGAAAAADAAAYAADAAAAABgAAMAAAgAEAAAwAAGAAAMAAAAAGAAAwAACAAQAADAAAYAAAAAMAABgAAMAAAAAGAAAwAACAAQAADAAAYAAAAAMAABgAAMAAAIABAAAMAABgAAAAAwAAGAAAwAAAAAYAADAAAIABAAAMAABgAAAAAwAAGAAAwAAAAAYAADAAAIABAAADAAAYAADAAAAABgAAMAAAgAEAAAwAAGAAAAADAAAYAADAAAAABgAAMAAAgAEAAAwAAGAAAAADAAAGAAAwAACAAQAADAAAYAAAAAMAABgAAMAAAAAGAAAwAACAAQAADAAAYAAAAAMAABgAAMAAAAAGAAAMgAQAYAAAAAMAABgAAMAAAAAGAAAwAACAAQAADAAAYAAAAAMAABgAAMAAAAAGAAAwAACAAQAADAAAYAAAwAAAAAYAADAAAIABAAAMAABgAAAAAwAAGAAAwAAAAAYAADAAAIABAAAMAABgAAAAAwAAGAAAwAAAgAEAAAwAAGAAAAADAAAYAADAAAAABgAAMAAAgAEAAAwAAGAAAAADAAAYAADAAAAABgAAMAAAgAEAAAMAABgAAMAAAAAGAAAwAACAAQAADAAAYAAAAAMAABgAAMAAAAAGAAAwAACAAQAADAAAYAAAAAMAAAYAADAAAIABAAAMAABgAAAAAwAAGAAAwAAAAAYAADAAAIABAAAMAABgAAAAAwAAGAAAwAAAAAYAAAyABABgAAAAAwAAGAAAwAAAAAYAADAAAIABAAAMAABgAAAAAwAAGAAAwAAAAAYAADAAAIABAAAMAABgAADAAAAABgAAMAAAgAEAAAwAAGAAAAADAAAYAADAAAAABgAAMAAAgAEAAAwAAGAAAAADAAAYAADAAACAAQAADAAAYAAAAAMAABgAAMAAAAAGAAAwAACAAQAADAAAYAAAAAMAABgAAMAAAAAGAAAwAACAAQAAAwAAGAAAwAAAAAYAADAAAIABAAAMAABgAAAAAwAAGAAAwAAAAAYAADAAAIABAAAMAABgAAAAAwAABgAAMAAAgAEAAAwAAGAAAAADAAAYAADAAAAABgAAMAAAgAEAAAwAAGAAAAADAAAYAADAAAAABgAADIAEAGAAAAADAAAYAADAAAAABgAAMAAAgAEAAAwAAGAAAAADAAAYAADAAAAABgAAMAAAgAEAAAwAAGAAAMAAAAAGAAAwAACAAQAADAAAYAAAAAMAABgAAMAAAAAGAAAwAACAAQAADAAAYAAAAAMAABgAAMAAAIABAAAMAABgAAAAAwAAGAAAwAAAAAYAADAAAIABAAAMAABgAAAAAwAAGAAAwAAAAAYAADAAAIABAAADAAAYAADAAAAABgAAMAAAgAEAAAwAAGAAAAADAAAYAADAAAAABgAAMAAAgAEAAAwAAGAAAAADAAAGAAAwAACAAQAADAAAYAAAAAMAABgAAMAAAAAGAAAwAACAAQAADAAAYAAAAAMAABgAAMAAAAAGAAAMgAQAYAAAAAMAABgAAMAAAAAGAAAwAACAAQAADAAAYAAAAAMAABgAAMAAAAAGAAAwAACAAQAADAAAYAAAwAAAAAYAADAAAIABAAAMAABgAAAAAwAAGAAAwAAAAAYAADAAAIABAAAMAABgAAAAAwAAGAAAwAAAgAEAAAwAAGAAAAADAAAYAADAAAAABgAAMAAAgAEAAAwAAGAAAAADAAAYAADAAAAABgAAMAAAgAEAAAMAABgAAMAAAAAGAAAwAACAAQAADAAAYAAAAAMAABgAAMAAAAAGAAAwAACAAQAADAAAYAAAAAMAAAYAADAAAIABAAAMAABgAAAAAwAAGAAAwAAAAAYAADAAAIABAAAMAAAwpwGw8AZTWdWFwwAAAABJRU5ErkJggg=="},{"name":"BG2","uri":"data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAgAAAAIACAYAAAD0eNT6AAAG3klEQVR42u3WMQEAMAjAsDGHO+cD/2CCj0RCr0b+VwcAWOVKAAAGAAAwAACAAQAADAAAYAAAAAMAABgAAMAAAAAGAAAwAACAAQAADAAAYAAAAAMAABgAAMAAAAAGAAAMAABgAAAAAwAAGAAAwAAAAAYAADAAAIABAAAMAABgAAAAAwAAGAAAwAAAAAYAADAAAIABAAAMAAAYAADAAAAABgAAMAAAgAEAAAwAAGAAAAADAAAYAADAAAAABgAAMAAAgAEAAAwAAGAAAAADAAAYAAAwAACAAQAADAAAYAAAAAMAABgAAMAAAAAGAAAwAACAAQAADAAAYAAAAAMAABgAAMAAAAAGAAAwAABgAAAAAwAAGAAAwAAAAAYAADAAAIABAAAMAABgAAAAAwAAGAAAwAAAAAYAADAAAIABAAAMAABgAADAAEgAAAYAADAAAIABAAAMAABgAAAAAwAAGAAAwAAAAAYAADAAAIABAAAMAABgAAAAAwAAGAAAwAAAAAYAAAwAAGAAAAADAAAYAADAAAAABgAAMAAAgAEAAAwAAGAAAAADAAAYAADAAAAABgAAMAAAgAEAAAwAABgAAMAAAAAGAAAwAACAAQAADAAAYAAAAAMAABgAAMAAAAAGAAAwAACAAQAADAAAYAAAAAMAABgAADAAAIABAAAMAABgAAAAAwAAGAAAwAAAAAYAADAAAIABAAAMAABgAAAAAwAAGAAAwAAAAAYAADAAAGAAAAADAAAYAADAAAAABgAAMAAAgAEAAAwAAGAAAAADAAAYAADAAAAABgAAMAAAgAEAAAwAAGAAAMAASAAABgAAMAAAgAEAAAwAAGAAAAADAAAYAADAAAAABgAAMAAAgAEAAAwAAGAAAAADAAAYAADAAAAABgAADAAAYAAAAAMAABgAAMAAAAAGAAAwAACAAQAADAAAYAAAAAMAABgAAMAAAAAGAAAwAACAAQAADAAAGAAAwAAAAAYAADAAAIABAAAMAABgAAAAAwAAGAAAwAAAAAYAADAAAIABAAAMAABgAAAAAwAAGAAAMAAAgAEAAAwAAGAAAAADAAAYAADAAAAABgAAMAAAgAEAAAwAAGAAAAADAAAYAADAAAAABgAAMAAAYAAAAAMAABgAAMAAAAAGAAAwAACAAQAADAAAYAAAAAMAABgAAMAAAAAGAAAwAACAAQAADAAAYAAAwABIAAAGAAAwAACAAQAADAAAYAAAAAMAABgAAMAAAAAGAAAwAACAAQAADAAAYAAAAAMAABgAAMAAAAAGAAAMAABgAAAAAwAAGAAAwAAAAAYAADAAAIABAAAMAABgAAAAAwAAGAAAwAAAAAYAADAAAIABAAAMAAAYAADAAAAABgAAMAAAgAEAAAwAAGAAAAADAAAYAADAAAAABgAAMAAAgAEAAAwAAGAAAAADAAAYAAAwAACAAQAADAAAYAAAAAMAABgAAMAAAAAGAAAwAACAAQAADAAAYAAAAAMAABgAAMAAAAAGAAAwAABgAAAAAwAAGAAAwAAAAAYAADAAAIABAAAMAABgAAAAAwAAGAAAwAAAAAYAADAAAIABAAAMAABgAADAAEgAAAYAADAAAIABAAAMAABgAAAAAwAAGAAAwAAAAAYAADAAAIABAAAMAABgAAAAAwAAGAAAwAAAAAYAAAwAAGAAAAADAAAYAADAAAAABgAAMAAAgAEAAAwAAGAAAAADAAAYAADAAAAABgAAMAAAgAEAAAwAABgAAMAAAAAGAAAwAACAAQAADAAAYAAAAAMAABgAAMAAAAAGAAAwAACAAQAADAAAYAAAAAMAABgAADAAAIABAAAMAABgAAAAAwAAGAAAwAAAAAYAADAAAIABAAAMAABgAAAAAwAAGAAAwAAAAAYAADAAAGAAAAADAAAYAADAAAAABgAAMAAAgAEAAAwAAGAAAAADAAAYAADAAAAABgAAMAAAgAEAAAwAAGAAAMAASAAABgAAMAAAgAEAAAwAAGAAAAADAAAYAADAAAAABgAAMAAAgAEAAAwAAGAAAAADAAAYAADAAAAABgAADAAAYAAAAAMAABgAAMAAAAAGAAAwAACAAQAADAAAYAAAAAMAABgAAMAAAAAGAAAwAACAAQAADAAAGAAAwAAAAAYAADAAAIABAAAMAABgAAAAAwAAGAAAwAAAAAYAADAAAIABAAAMAABgAAAAAwAAGAAAMAAAgAEAAAwAAGAAAAADAAAYAADAAAAABgAAMAAAgAEAAAwAAGAAAAADAAAYAADAAAAABgAAMAAAYAAAAAMAABgAAMAAAAAGAAAwAACAAQAADAAAYAAAAAMAABgAAMAAAABzGhK/Bh0FAmmeAAAAAElFTkSuQmCC"},{"name":"BG3","uri":"data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAgAAAAIACAYAAAD0eNT6AAAG3klEQVR42u3WMQEAMAjAsDG1M7YHk2CCj0RCr0a+XwcAWOVKAAAGAAAwAACAAQAADAAAYAAAAAMAABgAAMAAAAAGAAAwAACAAQAADAAAYAAAAAMAABgAAMAAAAAGAAAMAABgAAAAAwAAGAAAwAAAAAYAADAAAIABAAAMAABgAAAAAwAAGAAAwAAAAAYAADAAAIABAAAMAAAYAADAAAAABgAAMAAAgAEAAAwAAGAAAAADAAAYAADAAAAABgAAMAAAgAEAAAwAAGAAAAADAAAYAAAwAACAAQAADAAAYAAAAAMAABgAAMAAAAAGAAAwAACAAQAADAAAYAAAAAMAABgAAMAAAAAGAAAwAABgAAAAAwAAGAAAwAAAAAYAADAAAIABAAAMAABgAAAAAwAAGAAAwAAAAAYAADAAAIABAAAMAABgAADAAEgAAAYAADAAAIABAAAMAABgAAAAAwAAGAAAwAAAAAYAADAAAIABAAAMAABgAAAAAwAAGAAAwAAAAAYAAAwAAGAAAAADAAAYAADAAAAABgAAMAAAgAEAAAwAAGAAAAADAAAYAADAAAAABgAAMAAAgAEAAAwAABgAAMAAAAAGAAAwAACAAQAADAAAYAAAAAMAABgAAMAAAAAGAAAwAACAAQAADAAAYAAAAAMAABgAADAAAIABAAAMAABgAAAAAwAAGAAAwAAAAAYAADAAAIABAAAMAABgAAAAAwAAGAAAwAAAAAYAADAAAGAAAAADAAAYAADAAAAABgAAMAAAgAEAAAwAAGAAAAADAAAYAADAAAAABgAAMAAAgAEAAAwAAGAAAMAASAAABgAAMAAAgAEAAAwAAGAAAAADAAAYAADAAAAABgAAMAAAgAEAAAwAAGAAAAADAAAYAADAAAAABgAADAAAYAAAAAMAABgAAMAAAAAGAAAwAACAAQAADAAAYAAAAAMAABgAAMAAAAAGAAAwAACAAQAADAAAGAAAwAAAAAYAADAAAIABAAAMAABgAAAAAwAAGAAAwAAAAAYAADAAAIABAAAMAABgAAAAAwAAGAAAMAAAgAEAAAwAAGAAAAADAAAYAADAAAAABgAAMAAAgAEAAAwAAGAAAAADAAAYAADAAAAABgAAMAAAYAAAAAMAABgAAMAAAAAGAAAwAACAAQAADAAAYAAAAAMAABgAAMAAAAAGAAAwAACAAQAADAAAYAAAwABIAAAGAAAwAACAAQAADAAAYAAAAAMAABgAAMAAAAAGAAAwAACAAQAADAAAYAAAAAMAABgAAMAAAAAGAAAMAABgAAAAAwAAGAAAwAAAAAYAADAAAIABAAAMAABgAAAAAwAAGAAAwAAAAAYAADAAAIABAAAMAAAYAADAAAAABgAAMAAAgAEAAAwAAGAAAAADAAAYAADAAAAABgAAMAAAgAEAAAwAAGAAAAADAAAYAAAwAACAAQAADAAAYAAAAAMAABgAAMAAAAAGAAAwAACAAQAADAAAYAAAAAMAABgAAMAAAAAGAAAwAABgAAAAAwAAGAAAwAAAAAYAADAAAIABAAAMAABgAAAAAwAAGAAAwAAAAAYAADAAAIABAAAMAABgAADAAEgAAAYAADAAAIABAAAMAABgAAAAAwAAGAAAwAAAAAYAADAAAIABAAAMAABgAAAAAwAAGAAAwAAAAAYAAAwAAGAAAAADAAAYAADAAAAABgAAMAAAgAEAAAwAAGAAAAADAAAYAADAAAAABgAAMAAAgAEAAAwAABgAAMAAAAAGAAAwAACAAQAADAAAYAAAAAMAABgAAMAAAAAGAAAwAACAAQAADAAAYAAAAAMAABgAADAAAIABAAAMAABgAAAAAwAAGAAAwAAAAAYAADAAAIABAAAMAABgAAAAAwAAGAAAwAAAAAYAADAAAGAAAAADAAAYAADAAAAABgAAMAAAgAEAAAwAAGAAAAADAAAYAADAAAAABgAAMAAAgAEAAAwAAGAAAMAASAAABgAAMAAAgAEAAAwAAGAAAAADAAAYAADAAAAABgAAMAAAgAEAAAwAAGAAAAADAAAYAADAAAAABgAADAAAYAAAAAMAABgAAMAAAAAGAAAwAACAAQAADAAAYAAAAAMAABgAAMAAAAAGAAAwAACAAQAADAAAGAAAwAAAAAYAADAAAIABAAAMAABgAAAAAwAAGAAAwAAAAAYAADAAAIABAAAMAABgAAAAAwAAGAAAMAAAgAEAAAwAAGAAAAADAAAYAADAAAAABgAAMAAAgAEAAAwAAGAAAAADAAAYAADAAAAABgAAMAAAYAAAAAMAABgAAMAAAAAGAAAwAACAAQAADAAAYAAAAAMAABgAAMAAAABzGtLuBrb/sBNSAAAAAElFTkSuQmCC"},{"name":"BG4","uri":"data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAgAAAAIACAYAAAD0eNT6AAAG30lEQVR42u3WMQEAMAjAsDFB+/bg3xeY4COR0KvxftYBAFa5EgCAAQAADAAAYAAAAAMAABgAAMAAAAAGAAAwAACAAQAADAAAYAAAAAMAABgAAMAAAAAGAAAwAACAAQAAAwAAGAAAwAAAAAYAADAAAIABAAAMAABgAAAAAwAAGAAAwAAAAAYAADAAAIABAAAMAABgAAAAAwAABgAAMAAAgAEAAAwAAGAAAAADAAAYAADAAAAABgAAMAAAgAEAAAwAAGAAAAADAAAYAADAAAAABgAADAAAYAAAAAMAABgAAMAAAAAGAAAwAACAAQAADAAAYAAAAAMAABgAAMAAAAAGAAAwAACAAQAADAAAGAAAwAAAAAYAADAAAIABAAAMAABgAAAAAwAAGAAAwAAAAAYAADAAAIABAAAMAABgAAAAAwAAGAAAMAASAIABAAAMAABgAAAAAwAAGAAAwAAAAAYAADAAAIABAAAMAABgAAAAAwAAGAAAwAAAAAYAADAAAIABAAADAAAYAADAAAAABgAAMAAAgAEAAAwAAGAAAAADAAAYAADAAAAABgAAMAAAgAEAAAwAAGAAAAADAAAGAAAwAACAAQAADAAAYAAAAAMAABgAAMAAAAAGAAAwAACAAQAADAAAYAAAAAMAABgAAMAAAAAGAAAMAABgAAAAAwAAGAAAwAAAAAYAADAAAIABAAAMAABgAAAAAwAAGAAAwAAAAAYAADAAAIABAAAMAAAYAADAAAAABgAAMAAAgAEAAAwAAGAAAAADAAAYAADAAAAABgAAMAAAgAEAAAwAAGAAAAADAAAYAAAwABIAgAEAAAwAAGAAAAADAAAYAADAAAAABgAAMAAAgAEAAAwAAGAAAAADAAAYAADAAAAABgAAMAAAgAEAAAMAABgAAMAAAAAGAAAwAACAAQAADAAAYAAAAAMAABgAAMAAAAAGAAAwAACAAQAADAAAYAAAAAMAAAYAADAAAIABAAAMAABgAAAAAwAAGAAAwAAAAAYAADAAAIABAAAMAABgAAAAAwAAGAAAwAAAAAYAAAwAAGAAAAADAAAYAADAAAAABgAAMAAAgAEAAAwAAGAAAAADAAAYAADAAAAABgAAMAAAgAEAAAwAABgAAMAAAAAGAAAwAACAAQAADAAAYAAAAAMAABgAAMAAAAAGAAAwAACAAQAADAAAYAAAAAMAABgAADAAEgCAAQAADAAAYAAAAAMAABgAAMAAAAAGAAAwAACAAQAADAAAYAAAAAMAABgAAMAAAAAGAAAwAACAAQAAAwAAGAAAwAAAAAYAADAAAIABAAAMAABgAAAAAwAAGAAAwAAAAAYAADAAAIABAAAMAABgAAAAAwAABgAAMAAAgAEAAAwAAGAAAAADAAAYAADAAAAABgAAMAAAgAEAAAwAAGAAAAADAAAYAADAAAAABgAADAAAYAAAAAMAABgAAMAAAAAGAAAwAACAAQAADAAAYAAAAAMAABgAAMAAAAAGAAAwAACAAQAADAAAGAAAwAAAAAYAADAAAIABAAAMAABgAAAAAwAAGAAAwAAAAAYAADAAAIABAAAMAABgAAAAAwAAGAAAMAASAIABAAAMAABgAAAAAwAAGAAAwAAAAAYAADAAAIABAAAMAABgAAAAAwAAGAAAwAAAAAYAADAAAIABAAADAAAYAADAAAAABgAAMAAAgAEAAAwAAGAAAAADAAAYAADAAAAABgAAMAAAgAEAAAwAAGAAAAADAAAGAAAwAACAAQAADAAAYAAAAAMAABgAAMAAAAAGAAAwAACAAQAADAAAYAAAAAMAABgAAMAAAAAGAAAMAABgAAAAAwAAGAAAwAAAAAYAADAAAIABAAAMAABgAAAAAwAAGAAAwAAAAAYAADAAAIABAAAMAAAYAADAAAAABgAAMAAAgAEAAAwAAGAAAAADAAAYAADAAAAABgAAMAAAgAEAAAwAAGAAAAADAAAYAAAwABIAgAEAAAwAAGAAAAADAAAYAADAAAAABgAAMAAAgAEAAAwAAGAAAAADAAAYAADAAAAABgAAMAAAgAEAAAMAABgAAMAAAAAGAAAwAACAAQAADAAAYAAAAAMAABgAAMAAAAAGAAAwAACAAQAADAAAYAAAAAMAAAYAADAAAIABAAAMAABgAAAAAwAAGAAAwAAAAAYAADAAAIABAAAMAABgAAAAAwAAGAAAwAAAAAYAAAwAAGAAAAADAAAYAADAAAAABgAAMAAAgAEAAAwAAGAAAAADAAAYAADAAAAABgAAMAAAgAEAAAwAABgAAMAAAAAGAAAwAACAAQAADAAAYAAAAAMAABgAAMAAAAAGAAAwAADAnAaYhAWc10fw/wAAAABJRU5ErkJggg=="},{"name":"BG5","uri":"data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAgAAAAIACAYAAAD0eNT6AAAG30lEQVR42u3WMREAMAgAsVKb1dAF/3dggo1Ewk8fL38dAGCVKwEAGAAAwAAAAAYAADAAAIABAAAMAABgAAAAAwAAGAAAwAAAAAYAADAAAIABAAAMAABgAAAAAwAAGAAAMAAAgAEAAAwAAGAAAAADAAAYAADAAAAABgAAMAAAgAEAAAwAAGAAAAADAAAYAADAAAAABgAAMAAAYAAAAAMAABgAAMAAAAAGAAAwAACAAQAADAAAYAAAAAMAABgAAMAAAAAGAAAwAACAAQAADAAAYAAAwAAAAAYAADAAAIABAAAMAABgAAAAAwAAGAAAwAAAAAYAADAAAIABAAAMAABgAAAAAwAAGAAAwAAAgAEAAAwAAGAAAAADAAAYAADAAAAABgAAMAAAgAEAAAwAAGAAAAADAAAYAADAAAAABgAAMAAAgAEAAAMgAQAYAADAAAAABgAAMAAAgAEAAAwAAGAAAAADAAAYAADAAAAABgAAMAAAgAEAAAwAAGAAAAADAAAYAAAwAACAAQAADAAAYAAAAAMAABgAAMAAAAAGAAAwAACAAQAADAAAYAAAAAMAABgAAMAAAAAGAAAwAABgAAAAAwAAGAAAwAAAAAYAADAAAIABAAAMAABgAAAAAwAAGAAAwAAAAAYAADAAAIABAAAMAABgAADAAAAABgAAMAAAgAEAAAwAAGAAAAADAAAYAADAAAAABgAAMAAAgAEAAAwAAGAAAAADAAAYAADAAACAAQAADAAAYAAAAAMAABgAAMAAAAAGAAAwAACAAQAADAAAYAAAAAMAABgAAMAAAAAGAAAwAACAAQAAAyABABgAAMAAAAAGAAAwAACAAQAADAAAYAAAAAMAABgAAMAAAAAGAAAwAACAAQAADAAAYAAAAAMAABgAADAAAIABAAAMAABgAAAAAwAAGAAAwAAAAAYAADAAAIABAAAMAABgAAAAAwAAGAAAwAAAAAYAADAAAGAAAAADAAAYAADAAAAABgAAMAAAgAEAAAwAAGAAAAADAAAYAADAAAAABgAAMAAAgAEAAAwAAGAAAMAAAAAGAAAwAACAAQAADAAAYAAAAAMAABgAAMAAAAAGAAAwAACAAQAADAAAYAAAAAMAABgAAMAAAIABAAAMAABgAAAAAwAAGAAAwAAAAAYAADAAAIABAAAMAABgAAAAAwAAGAAAwAAAAAYAADAAAIABAAADIAEAGAAAwAAAAAYAADAAAIABAAAMAABgAAAAAwAAGAAAwAAAAAYAADAAAIABAAAMAABgAAAAAwAAGAAAMAAAgAEAAAwAAGAAAAADAAAYAADAAAAABgAAMAAAgAEAAAwAAGAAAAADAAAYAADAAAAABgAAMAAAYAAAAAMAABgAAMAAAAAGAAAwAACAAQAADAAAYAAAAAMAABgAAMAAAAAGAAAwAACAAQAADAAAYAAAwAAAAAYAADAAAIABAAAMAABgAAAAAwAAGAAAwAAAAAYAADAAAIABAAAMAABgAAAAAwAAGAAAwAAAgAEAAAwAAGAAAAADAAAYAADAAAAABgAAMAAAgAEAAAwAAGAAAAADAAAYAADAAAAABgAAMAAAgAEAAAMgAQAYAADAAAAABgAAMAAAgAEAAAwAAGAAAAADAAAYAADAAAAABgAAMAAAgAEAAAwAAGAAAAADAAAYAAAwAACAAQAADAAAYAAAAAMAABgAAMAAAAAGAAAwAACAAQAADAAAYAAAAAMAABgAAMAAAAAGAAAwAABgAAAAAwAAGAAAwAAAAAYAADAAAIABAAAMAABgAAAAAwAAGAAAwAAAAAYAADAAAIABAAAMAABgAADAAAAABgAAMAAAgAEAAAwAAGAAAAADAAAYAADAAAAABgAAMAAAgAEAAAwAAGAAAAADAAAYAADAAACAAQAADAAAYAAAAAMAABgAAMAAAAAGAAAwAACAAQAADAAAYAAAAAMAABgAAMAAAAAGAAAwAACAAQAAAyABABgAAMAAAAAGAAAwAACAAQAADAAAYAAAAAMAABgAAMAAAAAGAAAwAACAAQAADAAAYAAAAAMAABgAADAAAIABAAAMAABgAAAAAwAAGAAAwAAAAAYAADAAAIABAAAMAABgAAAAAwAAGAAAwAAAAAYAADAAAGAAAAADAAAYAADAAAAABgAAMAAAgAEAAAwAAGAAAAADAAAYAADAAAAABgAAMAAAgAEAAAwAAGAAAMAAAAAGAAAwAACAAQAADAAAYAAAAAMAABgAAMAAAAAGAAAwAACAAQAADAAAYAAAAAMAABgAAMAAAIABAAAMAABgAAAAAwAAGAAAwAAAAAYAADAAAIABAAAMAABgAAAAAwAAzGlkkgY5z6pP4AAAAABJRU5ErkJggg=="},{"name":"BG6","uri":"data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAgAAAAIACAYAAAD0eNT6AAAG3klEQVR42u3WMQEAMAjAsDHbEzEfmAQTfCQSejVe/joAwCpXAgAwAACAAQAADAAAYAAAAAMAABgAAMAAAAAGAAAwAACAAQAADAAAYAAAAAMAABgAAMAAAAAGAAAwAABgAAAAAwAAGAAAwAAAAAYAADAAAIABAAAMAABgAAAAAwAAGAAAwAAAAAYAADAAAIABAAAMAABgAADAAAAABgAAMAAAgAEAAAwAAGAAAAADAAAYAADAAAAABgAAMAAAgAEAAAwAAGAAAAADAAAYAADAAACAAQAADAAAYAAAAAMAABgAAMAAAAAGAAAwAACAAQAADAAAYAAAAAMAABgAAMAAAAAGAAAwAACAAQAAAwAAGAAAwAAAAAYAADAAAIABAAAMAABgAAAAAwAAGAAAwAAAAAYAADAAAIABAAAMAABgAAAAAwAABkACADAAAIABAAAMAABgAAAAAwAAGAAAwAAAAAYAADAAAIABAAAMAABgAAAAAwAAGAAAwAAAAAYAADAAAGAAAAADAAAYAADAAAAABgAAMAAAgAEAAAwAAGAAAAADAAAYAADAAAAABgAAMAAAgAEAAAwAAGAAAMAAAAAGAAAwAACAAQAADAAAYAAAAAMAABgAAMAAAAAGAAAwAACAAQAADAAAYAAAAAMAABgAAMAAAIABAAAMAABgAAAAAwAAGAAAwAAAAAYAADAAAIABAAAMAABgAAAAAwAAGAAAwAAAAAYAADAAAIABAAADAAAYAADAAAAABgAAMAAAgAEAAAwAAGAAAAADAAAYAADAAAAABgAAMAAAgAEAAAwAAGAAAAADAAAGQAIAMAAAgAEAAAwAAGAAAAADAAAYAADAAAAABgAAMAAAgAEAAAwAAGAAAAADAAAYAADAAAAABgAAMAAAYAAAAAMAABgAAMAAAAAGAAAwAACAAQAADAAAYAAAAAMAABgAAMAAAAAGAAAwAACAAQAADAAAYAAAwAAAAAYAADAAAIABAAAMAABgAAAAAwAAGAAAwAAAAAYAADAAAIABAAAMAABgAAAAAwAAGAAAwAAAgAEAAAwAAGAAAAADAAAYAADAAAAABgAAMAAAgAEAAAwAAGAAAAADAAAYAADAAAAABgAAMAAAgAEAAAMAABgAAMAAAAAGAAAwAACAAQAADAAAYAAAAAMAABgAAMAAAAAGAAAwAACAAQAADAAAYAAAAAMAAAZAAgAwAACAAQAADAAAYAAAAAMAABgAAMAAAAAGAAAwAACAAQAADAAAYAAAAAMAABgAAMAAAAAGAAAwAABgAAAAAwAAGAAAwAAAAAYAADAAAIABAAAMAABgAAAAAwAAGAAAwAAAAAYAADAAAIABAAAMAABgAADAAAAABgAAMAAAgAEAAAwAAGAAAAADAAAYAADAAAAABgAAMAAAgAEAAAwAAGAAAAADAAAYAADAAACAAQAADAAAYAAAAAMAABgAAMAAAAAGAAAwAACAAQAADAAAYAAAAAMAABgAAMAAAAAGAAAwAACAAQAAAwAAGAAAwAAAAAYAADAAAIABAAAMAABgAAAAAwAAGAAAwAAAAAYAADAAAIABAAAMAABgAAAAAwAABkACADAAAIABAAAMAABgAAAAAwAAGAAAwAAAAAYAADAAAIABAAAMAABgAAAAAwAAGAAAwAAAAAYAADAAAGAAAAADAAAYAADAAAAABgAAMAAAgAEAAAwAAGAAAAADAAAYAADAAAAABgAAMAAAgAEAAAwAAGAAAMAAAAAGAAAwAACAAQAADAAAYAAAAAMAABgAAMAAAAAGAAAwAACAAQAADAAAYAAAAAMAABgAAMAAAIABAAAMAABgAAAAAwAAGAAAwAAAAAYAADAAAIABAAAMAABgAAAAAwAAGAAAwAAAAAYAADAAAIABAAADAAAYAADAAAAABgAAMAAAgAEAAAwAAGAAAAADAAAYAADAAAAABgAAMAAAgAEAAAwAAGAAAAADAAAGQAIAMAAAgAEAAAwAAGAAAAADAAAYAADAAAAABgAAMAAAgAEAAAwAAGAAAAADAAAYAADAAAAABgAAMAAAYAAAAAMAABgAAMAAAAAGAAAwAACAAQAADAAAYAAAAAMAABgAAMAAAAAGAAAwAACAAQAADAAAYAAAwAAAAAYAADAAAIABAAAMAABgAAAAAwAAGAAAwAAAAAYAADAAAIABAAAMAABgAAAAAwAAGAAAwAAAgAEAAAwAAGAAAAADAAAYAADAAAAABgAAMAAAgAEAAAwAAGAAAAADAAAYAADAAAAABgAAMAAAgAEAAAMAABgAAMAAAAAGAAAwAACAAQAADAAAYAAAAAMAABgAAMAAAAAGAACY08oLBrPYksLEAAAAAElFTkSuQmCC"}],"Body":[{"name":"Body1","uri":"data:image/png;base64,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"},{"name":"Body10","uri":"data:image/png;base64,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"},{"name":"Body2","uri":"data:image/png;base64,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"},{"name":"Body3","uri":"data:image/png;base64,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"},{"name":"Body4","uri":"data:image/png;base64,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"},{"name":"Body5","uri":"data:image/png;base64,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"},{"name":"Body6","uri":"data:image/png;base64,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"},{"name":"Body7","uri":"data:image/png;base64,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"},{"name":"Body8","uri":"data:image/png;base64,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"},{"name":"Body9","uri":"data:image/png;base64,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"}],"Eyes":[{"name":"3D Glass","uri":"data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAgAAAAIACAYAAAD0eNT6AAAEiUlEQVR42u3YwQmDMBSAYVNcxRycQGeIRxdwj07Qg1encg8v7Qp2gYKQHGLh++4PwwvIT5oGAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAO4rWAHkG+fjrPn957IXzQ/bVnV/n/VVNN/F3j8MMj2sAAAEAAAgAAAAAQAACAAAQAAAAAIAABAAAIAAAAAEAAAgAAAAAQAACAAAQAAAAAIAALjSWgH8r5RSKJl/T9NZ8/xd7INbBC8AAIAAAAAEAAAgAAAAAQAACAAAQAAAAAIAAAQAACAAAAABAAAIAABAAAAAAgAAEAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAPzwBXmDDB6fzuc/AAAAAElFTkSuQmCC"},{"name":"Blue Glass","uri":"data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAgAAAAIACAYAAAD0eNT6AAAEfklEQVR42u3YwQmAMBBFwaykFc/2Y4Hpx7PFrCUIiujizD2Q/NMjrQEAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAADAd4UJ+LOx7Vn5/usyh/cDV0wmAAABAAAIAABAAAAAAgAAEAAAgAAAAAQAACAAAAABAAAIAABAAAAAAgAAEAAAgAAAAM50E0BpaQLADwAAIAAAAAEAAAgAABAAAIAAAAAEAAAgAAAAAQAACAAAQAAAAAIAABAAAIAAAAAEAADwiG4CKC1unk8Tgh8AAEAAAAACAAAQAACAAAAABAAAIAAAAAEAAAgAAEAAAAACAAAQAACAAAAABAAAIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAB43QFi0Qpj5qAgvwAAAABJRU5ErkJggg=="},{"name":"Blue Scanner","uri":"data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAgAAAAIACAYAAAD0eNT6AAAEgElEQVR42u3dsQ0AERiAUS420N9KN6uV9GZgBIUCufcGEPkj8kUjBAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA4VzQCWNKNwB0GN3qMAAAEAAAgAAAAAQAACAAAQAAAAAIAABAAAIAAAAAEAAAgAAAAAQAACAAAQAAAAAIAAJhJRgD7lNqu3v/35tUlolMAXgAAAAEAAAgAAEAAAAACAAAQAACAAAAABAAACAAAQAAAAAIAABAAAIAAAAAEAAAgAACAQ/mLG/bq7hDACwAAIAAAAAEAAAgAAEAAAAACAAAQAACAAAAAAQAACAAAQAAAAAIAABAAAIAAAAAEAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAL83ALxtBWIeEEdCAAAAAElFTkSuQmCC"},{"name":"Closed","uri":"data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAgAAAAIACAYAAAD0eNT6AAAENklEQVR42u3WwQkAMAgEQU3/PSc9mI8HMxXIgbBVAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAJGkTwJcb/sPp9wNDxwQAIAAAAAEAAAgAAEAAAAACAAAQAACAAAAABAAAIAAAAAEAAAgAAEAAAAACAAAQAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAuz3G8gIgtmtS6QAAAABJRU5ErkJggg=="},{"name":"Eye Patch","uri":"data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAgAAAAIACAYAAAD0eNT6AAAEjElEQVR42u3dywkAIQxAQRX7bzmWIJiDv5kGFiIuj1wsBQAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAOEU1Arha+AcAK5oRAIAAAAAEAAAgAAAAAQAACAAAQAAAAAIAABAAAIAAAAAEAAAgAAAAAQAACAAAQAAAADPeAoeccIcBGwAAQAAAAAIAABAAAIAAAAAEAAAgAAAAAQAACAAAQAAAAAIAABAAAIAAAAABAAAIAADgSd0I4Gux+fvVEYANAAAgAAAAAQAACAAAQAAAAAIAABAAAIAAAAABAAAIAABAAAAAAgAAEAAAgAAAAAQAAHAob3FDTriDgA0AACAAAAABAAAIAABAAAAAAgAAEAAAgAAAAAQAACAAAAABAAAIAABAAACAAAAABAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAkDS0+BICrpTitAAAAAElFTkSuQmCC"},{"name":"Improper Glass","uri":"data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAgAAAAIACAYAAAD0eNT6AAAEcElEQVR42u3dwQkAIAwAMRX3X7mO4EOkVpIJpKAc/dgaAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAADwim4EQKLwhkGOYQQAIAAAAAEAAAgAAEAAAAACAAAQAACAAAAABAAAIAAAAAEAAAgAAEAAAAACAAAQAADAjr+04UwUv8PVzw/YAAAAAgAAEAAAgAAAAAEAAAgAAEAAAAACAAAQAACAAAAABAAAIAAAAAEAAAgAAEAAAAC3TCOA0sIIABsAAEAAAAACAAAQAAAgAAAAAQAACAAAQAAAAAIAABAAAIAAAAAEAAAgAAAAAQAACAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAgA8tDOwEYPtNDcIAAAAASUVORK5CYII="},{"name":"Milk Glass","uri":"data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAgAAAAIACAYAAAD0eNT6AAAEgklEQVR42u3Y0QmAIABFUQ1XEXdyQHcSh7ERgkJKOudf0Pd1MQQAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA+K5oAv6sjzZ3vn/JNXo/cMdhAgAQAACAAAAABAAAIAAAAAEAAAgAAEAAAAACAAAQAACAAAAABAAAIAAAAAEAAAgAAOBKMgHsq482rQD4AQAABAAAIAAAAAEAAAIAABAAAIAAAAAEAAAgAAAAAQAACAAAQAAAAAIAABAAAIAAAACWSCaAfZVc45PzfbRpRfADAAAIAABAAAAAAgAAEAAAgAAAAAQAACAAAAABAAAIAABAAAAAAgAAEAAAgAAAAAQAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAArzsBYukPvXsgrzsAAAAASUVORK5CYII="},{"name":"Normal","uri":"data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAgAAAAIACAYAAAD0eNT6AAAEZklEQVR42u3YsQ2AMAwAwQSxSlJkf69CAcPAABRITgESd70Vy9UrpQAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAADAd1UngLxj384332991D/vD+QtTgAAAgAAEAAAgAAAAAQAACAAAAABAAAIAABAAAAAAgAAEAAAgAAAAAQAACAAAAABAAA8WZ0A8lofU/MRYX/ADwAAIAAAAAEAAAgAAEAAAAACAAAQAACAAAAAAQAACAAAQAAAAAIAABAAAIAAAAAEAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAdxfA+Q1qnHd9ugAAAABJRU5ErkJggg=="},{"name":"Red Scanner","uri":"data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAgAAAAIACAYAAAD0eNT6AAAEYElEQVR42u3Y0QlAEQCGUWQuExjXBBZjAeXBA+qcAW76u+lLCAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAADwrmgCODJM4A6DHyUTAIAAAAAEAAAgAAAAAQAACAAAQAAAAAIAABAAAIAAAAAEAAAgAAAAAQAACAAAQAAAADvZBHBPr/Xr85fWTj8R/QXgBQAAEAAAgAAAAAQAACAAAAABAAAIAABAAACAAAAABAAAIAAAAAEAAAgAAEAAAAACAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAACAhQmtwARDsN+zQwAAAABJRU5ErkJggg=="},{"name":"Red","uri":"data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAgAAAAIACAYAAAD0eNT6AAAEZ0lEQVR42u3Y0QnAIAxAQS0u4SrFMTqJazmkHaFgfmp79x8IAeFhSgAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAADwXtkJIGRu/oZ33x9YdDgBAAgAAEAAAAACAAAQAACAAAAABAAAIAAAAAEAAAgAAEAAAAACAAAQAACAAAAABAAA8KQ4Aay7WgvNn7WG5vsYv94f8AMAAAgAAEAAAAACAAAEAAAgAAAAAQAACAAAQAAAAAIAABAAAIAAAAAEAAAgAAAAAQAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA8Fk3rUUIQlIG6HQAAAAASUVORK5CYII="},{"name":"Sungalsses","uri":"data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAgAAAAIACAYAAAD0eNT6AAAEVUlEQVR42u3YsQkAIAxFwUTcf+U4gkUaI3e9IL+QhxEAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA8K40AbSUCbxhMNEyAQAIAABAAAAAAgAAEAAAgAAAAAQAACAAAAABAAAIAABAAAAAAgAAEAAAgAAAAAQAAHCzTQCjZfN8Db8/4AcAABAAAIAAAAAEAAAIAABAAAAAAgAAEAAAgAAAAAQAACAAAAABAAAIAABAAAAAAgAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA4E8H9NoCQ92KLNYAAAAASUVORK5CYII="},{"name":"White","uri":"data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAgAAAAIACAYAAAD0eNT6AAAEYklEQVR42u3YwQnAIAxAUS2u0h66/yw91GHqAB4K5mLgvbsQAoGPpQAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAADAvqoVQMiX/Iazzw8sOqwAAAQAACAAAAABAAAIAABAAAAAAgAAEAAAgAAAAAQAACAAAAABAAAIAABAAAAAAgAA+NOsANb19wm9P6/b/IAfAABAAAAAAgAAEAAAgAAAAAQAACAAAAABAAACAAAQAACAAAAABAAAIAAAAAEAAAgAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAABmA3DjCEKcyv2HAAAAAElFTkSuQmCC"},{"name":"Wink","uri":"data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAgAAAAIACAYAAAD0eNT6AAAEY0lEQVR42u3YwQnAIBBFQZW0aCMpxEYsctOA4GEPRpi5B+QT4WEpAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAPBf1QSQEu4wcKNmAgAQAACAAAAABAAAIAAAAAEAAAgAAEAAAAACAAAQAACAAAAABAAAIAAAAAEAAAgAAGDnMQGcM3pPff/OmT1CHJ6g+gvACwAAIAAAAAEAAAgAAEAAAAACAAAQAACAAAAAAQAACAAAQAAAAAIAABAAAIAAAAAEAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAACx80agVC7sQLZwAAAABJRU5ErkJggg=="}],"Outfits":[{"name":"Balloon","uri":"data:image/png;base64,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"},{"name":"Bip","uri":"data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAgAAAAIACAYAAAD0eNT6AAAEyUlEQVR42u3d0QmAIBRAUYuoYdp/FIepn1ogCHqIqecsYGjFxZ+XEgAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA9G+yBQzu8g05PxjRbAsAQAAAAAIAABAAAIAAAAAEAAAgAAAAAQAACAAAQAAAAAIAABAAAIAAAAAEAAAgAACAN2Zh0zrz4PH+gBsAAEAAAAACAAAQAAAgAAAAAQAACAAAQAAAAAIAABAAAIAAAAAEAAAgAAAAAQAACAAAoASzrBmdefDOD9wAAAACAAAQAACAAAAABAAAIAAAAAEAAAgAAEAAAAACAAAQAACAAAAABAAAIAAAAAEAADwxC5vWhebBH3kNLb7tpxOo6Afn5x+KGwAAQAAAAAIAABAAAIAAAAAEAAAgAAAAAQAACAAAQAAAAAIAABAAAIAAAAABAAAIAACgX4stgO+i8+ijovPso89fe33ADQAAIAAAAAEAAAgAABAAAIAAAAAEAAAgAAAAAQAACAAAQAAAAAIAABAAAIAAAAAEAABQ0A3ruhVzdVIJCgAAAABJRU5ErkJggg=="},{"name":"Black Robe","uri":"data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAgAAAAIACAYAAAD0eNT6AAAErklEQVR42u3dwQ3AIAwEQYzov2VTAuKFsGdKuIRoxSdjAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAABAfWECmktn0P7Q0TQBAAgAAEAAAAACAAAQAACAAAAABAAAIAAAAAEAAAgAAEAAAAACAAAQAACAAAAABAAAcLJMwOfSBDx8f8KEuAEAAAQAACAAAAABAAAIAABAAAAAAgAAEAAAgAAAAAQAACAAAAABAAAIAAAQAACAAAAAyvIva15LE3x9hj0/32DcAAAAAgAAEAAAgAAAAAQAACAAAAABAAAIAABAAAAAAgAAEAAAgAAAAAQAAAgAAEAAAABVLRO053/u0Pf8hUfgBgAAEAAAgAAAAAQAACAAAAABAAAIAABAAAAAAgAAEAAAgAAAAAQAACAAAAABAAAIAABAAAAAAgAABAAAIAAAAAEAAAgAAEAAAAACAAAQAACAAAAABAAAIAAAAAEAAAgAAEAAAAACAAC4sAGY2gihG5ECwAAAAABJRU5ErkJggg=="},{"name":"Black Tee","uri":"data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAgAAAAIACAYAAAD0eNT6AAAEj0lEQVR42u3dwQkAIQwAQSP233IsQXxIFGdKSPBY8rnWAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAPhRGAGPS2/I/u0f9nUjAAABAAAIAABAAAAAAgAAEAAAgAAAAAQAACAAAAABAAAIAABAAAAAAgAAEAAAgAAAAFb8y5pq6Q3av/2DCwAAIAAAAAEAAAgAAEAAAAACAAAQAACAAAAAAQAACAAAQAAAAAIAABAAAIAAAAAEAABwoWEEUCqNAHABAAAEAAAgAAAAAQAACAAAQAAAAAIAABAAACAAAAABAAAIAABAAAAAAgAAEAAAgAAAAK4URsDj0gjwDQUXAABAAAAAAgAAEAAAIAAAAAEAAAgAAEAAAAACAAAQAACAAAAABAAAIAAAAAEAAAgAAOCACc6ZBn9XmzEcAAAAAElFTkSuQmCC"},{"name":"Blue Costume","uri":"data:image/png;base64,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"},{"name":"Blue Hoodie","uri":"data:image/png;base64,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"},{"name":"Box and Orange","uri":"data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAgAAAAIACAYAAAD0eNT6AAAFRElEQVR42u3dsQ3CMBBA0ThCoqZjEIahhiUYgSWgzjAMQkdNdUyAgnKFie69PlJ0cpwvNx4GAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAqKsZAdS1n3aRef55fNlDYKVGIwAAAQAACAAAQAAAAAIAABAAAIAAAAAEAAAgAAAAAQAACAAAQAAAAAIAABAAAIAAAADmuMsb+gp7AOAEAAAQAACAAAAABAAAIAAAAAEAAAgAAEAAAIAAAAAEAAAgAAAAAQAACAAAQAAAAAIAAPhL7gKHnMg8/L71ffnt2R4CTgAAAAEAAAgAAEAAAAACAAAQAACAAAAABAAAIAAAAAEAAAgAAEAAAAACAAAQAACAAAAABAAAIAAAQAAAAAIAABAAAIAAAAAEAAAgAAAAAQAACAAAQAAAAAIAABAAAIAAAAAEAAAgAACAnzUjgK7CHgA4AQAABAAAIAAAAAEAAAgAAEAAAAACAAAQAAAgAAAAAQAACAAAQAAAAAIAABAAAIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAFmlGQFIYgW/Q+rF+WJ/RCABAAAAAAgAAEAAAgAAAAAQAACAAAAABAAAIAABAAAAAAgAAEAAAgAAAAAQAACAAAIA57pImdR/79XQoPbzL/WEFdWT9pdeff4ATAABAAAAAAgAAEAAAgAAAAAQAACAAAAABAAAIAABAAAAAAgAAEAAAgAAAAAQAACAAAIDvNkYAy1W/jx5wAgAACAAAQAAAAAIAABAAAIAAAAAEAAAgAAAAAQAACAAAQAAAAAIAABAAACAAAAABAAAIAABAAAAAAgAAEAAAgAAAAAQAACAAAAABAAAIAABAAAAAAgAAEAAAgAAAAAQAACAAAEAAAAClfADOFhQ7+LKq9AAAAABJRU5ErkJggg=="},{"name":"Box","uri":"data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAgAAAAIACAYAAAD0eNT6AAAFW0lEQVR42u3dwQmAIACGUY1GciKnaASncCJ3sgkiQkjK9+5dfko+vBQCAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAADAM9EETNZNgDMY3reZAAAEAAAgAAAAAQAACAAAQAAAAAIAABAAAIAAAAAEAAAgAAAAAQAACAAAQAAAAAIAALjjX9SM6iMPl5wsyLKO2pzhuAEAAAQAACAAAAABAAAIAABAAAAAAgAAEAAAgAAAAAEAAAgAAEAAAAACAAAQAACAAAAABAAAIAAAAAEAAAgAAEAAAAACAAAQAACAAAAABAAAIAAAAAEAAAIAABAAAIAAAAAEAAAgAAAAAQAACAAAQAAAAAIAABAAAIAAAAAEAAAgAAAAAQAACAAAQAAAAAIAAAQAACAAAAABAAAIAADg23YTsLKjNiMsrORkBNwAAAACAAAQAACAAAAABAAAIAAAAAEAAAgAAEAAAAACAAAQAACAAAAABAAAIAAAAAEAAFzZTQBDogmm6iYANwAAgAAAAAQAACAAAEAAAAACAAAQAACAAAAABAAAIAAAAAEAAAgAAEAAAAACAAAQAACAAAAABAAAIAAAAAEAAAgAAEAAAIAAAAAEAAAgAAAAAQAACAAAQAAAAAIAABAAAIAAAAAEAAAgAAAAAQAACAAAQAAAAAIAABAAAIAAAAAEAAAIAABAAAAAAgAAEAAAgAAAAAQAACAAAAABAAAIAABAAAAAAgAAEAAAgAAAAAQAACAAAAABAAAIAAAQAACAAAAABAAAIAAAAAEAAAgAAEAAAAACAAAQAACAAAAABAAAIAAAAAEAAAgAAEAAAAACAAAQAAAgAAAAAQAACAAAQAAAAAIAABAAAIAAAAAEAAAgAAAAAQAACAAAQAAAAAIAABAAAIAAAAAEAAAgAABAAAAAAgAAEAAAgAAAAAQAAPA50QRM1n1DeH/ADQAAIAAAAAEAAAgAAEAAAAACAAAQAACAAAAAAQAACAAAQAAAAAIAABAAAIAAAAAEAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAMBvnKrjDIIOxGvOAAAAAElFTkSuQmCC"},{"name":"Coolboy","uri":"data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAgAAAAIACAYAAAD0eNT6AAAFM0lEQVR42u3d0QmEMBBFUUe2/5bfNrAgkoVxzDkVaKLhkp85DgAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAABgVVkCWBJL4AyDiU5LAAACAAAQAACAAAAABAAAIAAAAAEAAAgAAEAAAAACAAAQAACAAAAABAAAIAAAAAEAAFwxS5vdxRI4A8ENAAAgAAAAAQAACAAAQAAAAAIAABAAAIAAAAAEAAAgAAAAAQAACAAAQAAAAAIAABAAAMAPZmEzXbZ++fS+ftX2R4gzFDcAAIAAAAAEAAAgAAAAAQAACAAAQAAAAAIAABAAAIAAAAAEAAAgAAAAAQAAAgAAEAAAwHuZZc10Gf3wydabVzX+CHKG4gYAABAAAIAAAAAEAAAgAAAAAQAACAAAQAAAAAIAABAAAIAAAAAEAAAgAABAAAAAAgAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAD+oSwBw8U/ZP/tP9x3WgIAEAAAgAAAAAQAACAAAAABAAAIAABAAAAAAgAAEAAAgAAAAAQAACAAAAABAAAIAADgilnWdFua5570joOvKv+g/bf/uAEAAAQAACAAAAABAAAIAABAAAAAAgAAEAAAgAAAAAQAACAAAAABAAAIAAAQAACAAAAA3sksarq1DnR/wTz52Ztv/Z3BuAEAAAQAACAAAAABAAAIAABAAAAAAgAAEAAAgAAAAAEAAAgAAEAAAAACAAAQAACAAAAAnutjCWi2Og89k18+iS9g7+8X3AAAAAIAABAAAIAAAAAEAAAgAAAAAQAACAAAQAAAgAAAAAQAACAAAAABAAAIAABAAAAAz/UFe0kf+hWMQK8AAAAASUVORK5CYII="},{"name":"Drum","uri":"data:image/png;base64,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"},{"name":"Green Costume","uri":"data:image/png;base64,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"},{"name":"Helmet","uri":"data:image/png;base64,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"},{"name":"Hoodie","uri":"data:image/png;base64,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"},{"name":"None","uri":"data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAgAAAAIACAYAAAD0eNT6AAAED0lEQVR42u3BMQEAAADCoPVPbQdvoAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA4DcC8AABL9rASwAAAABJRU5ErkJggg=="},{"name":"Oversized Hat","uri":"data:image/png;base64,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"},{"name":"Pop Balloon","uri":"data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAgAAAAIACAYAAAD0eNT6AAAExElEQVR42u3drQ2AMBRGUSDMggKPYRdGYxcMHlSXKQaPeCH8neNrvqTJTU2LAgAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAgDcpTUBQdocA3qcyAQAIAABAAAAAAgAAEAAAgAAAAAQAACAAAAABAAAIAABAAAAAAgAAEAAAgAAAAAQAAHDGX+bkyOFpmX893tgP7iDgBQAAEAAAgAAAAAQAACAAAAABAAAIAABAAAAAAgAAEAAAgAAAAAQAACAAAEAAAAACAAD4ptoE3Knp2tD5tG5GBPACAAAIAABAAAAAAgAABAAAIAAAAAEAAAgAAEAAAAACAAAQAACAAAAABAAAIAAAAAEAAFyhNgERTdeGzqd1MyKAFwAAQAAAAAIAABAAAIAAAAAEAAAgAAAAAQAAAgAAEAAAgAAAAAQAACAAAAABAAAIAADgiUoTEJTdIQAvAACAAAAABAAAIAAAAAEAAAgAAEAAAAACAAAQAACAAAAABAAAIAAAQAAAAAIAABAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAABx2T5sMotaNV7AAAAAASUVORK5CYII="},{"name":"Protector","uri":"data:image/png;base64,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"},{"name":"Red Hoodie","uri":"data:image/png;base64,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"},{"name":"White Collar","uri":"data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAgAAAAIACAYAAAD0eNT6AAAE+UlEQVR42u3dwQ3DIBAAQYzSlmuhttRCX5AS8jhZB2bmH1nGMV7xuVIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAOD9LkvA4aZ3yPODE1VLAAACAAAQAACAAAAABAAAIAAAAAEAAAgAAEAAAAACAAAQAACAAAAABAAAIAAAAAEAAPxjFja7C82DH2PECrrW09/hmXnxBZ6fPRQnAACAAAAABAAAIAAAAAEAAAgAAEAAAAACAAAQAACAAAAABAAAIAAAAAEAAAIAABAAAMB7fSwByULz5L/3HSvg4Dz46Dz6cMHXOjOvv8D9l8z/T+s9uv6XLQAnAACAAAAABAAAIAAAAAEAAAgAAEAAAAACAAAQAAAgAAAAAQAACAAAQAAAAAIAABAAAMCyzKImKjQPPTqPPVvrPfX62et3+v0vsH72cJwAAAACAAAQAACAAAAAAQAACAAAQAAAAAIAABAAAIAAAAAEAAAgAAAAAQAACAAAQAAAAM8xS5oZ+fHu89hhZ6133wCcAAAAAgAAEAAAgAAAAAEAAAgAAEAAAAACAAAQAACAAAAABAAAIAAAAAEAAAgAAEAAAADP+QFhzCW+7G2X8wAAAABJRU5ErkJggg=="},{"name":"White Tee","uri":"data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAgAAAAIACAYAAAD0eNT6AAAEqklEQVR42u3dwQ2AIBBFQfix/5LBEoxyWNGZBkiWYJ5caA0AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAACAP+pGwOamM2T/7T/cFyMAAAEAAAgAAEAAAAACAAAQAACAAAAABAAAIAAAAAEAAAgAAEAAAAACAAAQAACAAAAArnjLmmpL77mPMWoLOnEG7b/9xw0AACAAAAABAAAIAABAAAAAAgAAEAAAgAAAAAQAACAAAAABAAAIAABAAACAAAAABAAA8E2HEcBzq+/RJ5nmB7gBAAAEAAAgAAAAAQAACAAAQAAAAAIAABAAACAAAAABAAAIAABAAAAAAgAAEAAAgAAAAF6pGwGbm5WLe89+8Q8kKZ3/6vq+obgBAAAEAAAgAAAAAQAACAAAQAAAAAIAABAAAIAAAAAEAAAgAAAAAQAACAAAEAAAgAAAAD7tBD4tGHn13ZIcAAAAAElFTkSuQmCC"},{"name":"Yellow Tee","uri":"data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAgAAAAIACAYAAAD0eNT6AAAEq0lEQVR42u3dMQ6AIBAAQTA2FPf/h1JY4guMUQpEZnoTcxfNhoaUAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAFhRNgIm13xD9m//8NxmBAAgAAAAAQAACAAAQAAAAAIAABAAAIAAAAAEAAAgAAAAAQAACAAAQAAAAAIAABAAAMAdd1kzWtd97keNoS9fovoG7d/+cQIAAAgAAEAAAAACAAAQAACAAAAABAAAIAAAAAEAAAgAAEAAAAACAAAQAAAgAAAAAQAA/NNuBPBe7330JWozP8AJAAAgAAAAAQAACAAAQAAAAAIAABAAAIAAAAABAAAIAABAAAAAAgAAEAAAgAAAAAQAAPBJ2QiYXOt52H30aytR/UNxAgAACAAAQAAAAAIAABAAAIAAAAAEAAAgAAAAAQAACAAAQAAAAAIAABAAAIAAAAAEAABw5QQSwBR2BNJZRwAAAABJRU5ErkJggg=="}]};
+</script>
+<script>
+"use strict";
+/* ═══════════ CONFIG — EDIT AFTER DEPLOYING ═══════════ */
+const CONTRACT_ADDRESS = "0x54ef43c8417C14781eb358fC15De8a89446BBEB7";
+const CHAIN_ID = 1n, CHAIN_ID_HEX = "0x1";
+const READ_RPC = "https://eth-mainnet.g.alchemy.com/v2/W-6aTS8nqFNXXOVyJ5OsZ";
+const OPENSEA_URL = "https://opensea.io/collection/anteatereth";
+const MAX_SUPPLY = 3300;
+const METADATA_CID = "bafybeignhzoims3ue2m434tnfunwxxislk7qk6wniptu4252bw475mlh5m";
+// Gallery: all 3,300 ant images live under this IPFS folder CID.
+const IMAGES_CID = "bafybeibeehpmbvw6xhiapztnbbeujkapgujk33uyv442pc74olvjr3fzsy";
+// Public gateway works but is slow/rate-limited for 3,300 images.
+// For a real launch, swap in your dedicated gateway, e.g. "https://<your-subdomain>.mypinata.cloud/ipfs/"
+const IMAGE_GATEWAY = "https://ipfs.filebase.io/ipfs/";
+/* ════════════════════════════════════════════════════ */
+
+const ABI=[
+  "function currentPhase() view returns (uint8)","function paused() view returns (bool)",
+  "function publicSupply() view returns (uint16)","function nextPhaseStart() view returns (uint64)",
+  "function antPickFee() view returns (uint256)","function publicPrice() view returns (uint256)","function totalSupply() view returns (uint256)",
+  "function remainingSupply() view returns (uint256)","function phasePrice(uint8) view returns (uint256)",
+  "function antCounts(uint8) view returns (uint16[5])","function pickedAnt(uint8,address) view returns (uint8)",
+  "function hasMinted(uint8,address) view returns (bool)","function isEligible(address) view returns (bool)",
+  "function phases(uint8) view returns (uint8 status,uint8 survivingAnt,uint16 capacity,uint16 minted,uint64 selectStart,uint64 selectEnd,uint64 mintStart,uint64 mintEnd,uint256 drawBlock)",
+  "function pickAnt(uint8) payable","function mint() payable","function resolvePhase()","function drawSurvivor()","function drawReady() view returns (bool)",
+  "function openSelection()","function openPublic()","function closePhase()"
+];
+const ANTS=[
+  {nm:"MANDIBLE",c:"#ff4d4d",v:0},{nm:"SCOUT",c:"#37a0ff",v:1},{nm:"TANK",c:"#2ec16b",v:2},
+  {nm:"ZIPPY",c:"#ffc233",v:3},{nm:"QUEENIE",c:"#a55cff",v:4}
+];
+const ST={Pending:0,Selecting:1,Resolving:2,Minting:3,Closed:4};
+const INK="#1c1340";
+
+function antSVG(i){
+  const a=ANTS[i], c=a.c; let acc="";
+  if(a.v===0) acc=`<path d="M20 44 q-10 -4 -14 2 M20 52 q-10 4 -14 -2" stroke="${INK}" stroke-width="4" fill="none" stroke-linecap="round"/>`;
+  if(a.v===1) acc=`<rect x="14" y="30" width="14" height="7" rx="3" fill="${INK}"/>`;
+  if(a.v===2) acc=`<path d="M14 40 a13 13 0 0 1 26 0 z" fill="${INK}"/><rect x="13" y="38" width="28" height="5" fill="${INK}"/>`;
+  if(a.v===3) acc=`<path d="M30 32 l-5 -10 l6 3 l-3 -10" stroke="${a.c}" stroke-width="3" fill="none" stroke-linecap="round" stroke-linejoin="round"/>`;
+  if(a.v===4) acc=`<path d="M16 34 l3 -10 l5 6 l4 -9 l4 9 l5 -6 l3 10 z" fill="${a.c}" stroke="${INK}" stroke-width="3" stroke-linejoin="round"/>`;
+  return `<svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+    <g stroke="${INK}" stroke-width="5" stroke-linecap="round">
+      <line x1="48" y1="58" x2="36" y2="82"/><line x1="58" y1="60" x2="56" y2="84"/><line x1="68" y1="58" x2="76" y2="82"/>
+      <line x1="48" y1="56" x2="34" y2="68"/><line x1="60" y1="56" x2="60" y2="40" stroke-width="4"/>
+      <line x1="30" y1="44" x2="18" y2="28" stroke-width="4"/>
+    </g>
+    <ellipse cx="70" cy="56" rx="22" ry="17" fill="${c}" stroke="${INK}" stroke-width="5"/>
+    <ellipse cx="46" cy="53" rx="13" ry="12" fill="${c}" stroke="${INK}" stroke-width="5"/>
+    <circle cx="28" cy="48" r="14" fill="${c}" stroke="${INK}" stroke-width="5"/>
+    <circle cx="24" cy="46" r="6" fill="#fff" stroke="${INK}" stroke-width="3"/>
+    <circle cx="22" cy="46" r="2.5" fill="${INK}"/>
+    ${acc}
+  </svg>`;
+}
+function beastSVG(){
+  return `<svg viewBox="0 0 150 120" xmlns="http://www.w3.org/2000/svg">
+    <g stroke="${INK}" stroke-width="6" stroke-linecap="round">
+      <line x1="60" y1="86" x2="58" y2="110"/><line x1="84" y1="86" x2="86" y2="110"/>
+      <line x1="100" y1="84" x2="104" y2="108"/><line x1="44" y1="84" x2="40" y2="108"/>
+    </g>
+    <path d="M118 96 q34 -2 28 -40 q-6 18 -22 16 q10 -22 -6 -36 q2 22 -14 24 z" fill="#9b8a76" stroke="${INK}" stroke-width="6" stroke-linejoin="round"/>
+    <ellipse cx="78" cy="64" rx="50" ry="32" fill="#b6a48d" stroke="${INK}" stroke-width="6"/>
+    <path d="M40 56 q-30 4 -36 18 q-2 6 6 6 q4 -12 32 -8 z" fill="#b6a48d" stroke="${INK}" stroke-width="6" stroke-linejoin="round"/>
+    <path d="M6 80 q-6 2 -4 8" stroke="#ff7da6" stroke-width="6" fill="none" stroke-linecap="round"/>
+    <circle cx="70" cy="50" r="5" fill="${INK}"/>
+    <path d="M60 40 q12 -16 30 -8" stroke="${INK}" stroke-width="5" fill="none" stroke-linecap="round"/>
+  </svg>`;
+}
+
+const $=id=>document.getElementById(id);
+const placeholder=CONTRACT_ADDRESS==="0x0000000000000000000000000000000000000000";
+$("osLink").href=$("osLink2").href=OPENSEA_URL;
+$("scanLink").href=`https://etherscan.io/address/${CONTRACT_ADDRESS}`;
+if(placeholder)$("cfgWarn").classList.add("show");
+
+let readProvider=null, readC=null;
+try{
+  if(typeof ethers==="undefined") throw new Error("ethers library failed to load");
+  readProvider=new ethers.JsonRpcProvider(READ_RPC);
+  readC=placeholder?null:new ethers.Contract(CONTRACT_ADDRESS,ABI,readProvider);
+}catch(e){
+  console.error("Contract layer unavailable:",e);
+}
+let provider=null,signer=null,account=null,antPickFee=0n,pollTimer=null,animating=false;
+const revealed=new Set();
+
+let toastT;function toast(m,e=false){const t=$("toast");t.textContent=m;t.classList.toggle("err",e);t.classList.add("show");clearTimeout(toastT);toastT=setTimeout(()=>t.classList.remove("show"),5200);}
+const delay=ms=>new Promise(r=>setTimeout(r,ms));
+function cd(ts){const s=Math.max(0,Number(ts)-Math.floor(Date.now()/1000));const m=Math.floor(s/60),x=s%60;return `${m}:${x.toString().padStart(2,"0")}`;}
+function fmtErr(e){const m=(e?.shortMessage||e?.message||"").toLowerCase();
+  if(e?.code==="ACTION_REJECTED"||m.includes("user rejected"))return"Transaction rejected.";
+  if(m.includes("ispaused"))return"The game is paused.";
+  if(m.includes("alreadypicked"))return"You already picked this phase.";
+  if(m.includes("alreadyminted"))return"You already minted this phase.";
+  if(m.includes("antfull"))return"That ant is full (300).";
+  if(m.includes("noteligible"))return"Your ant didn't survive.";
+  if(m.includes("windowclosed"))return"That window has closed.";
+  if(m.includes("tooearly"))return"Too early — timer not elapsed.";
+  if(m.includes("wrongstatus"))return"Not available right now.";
+  if(m.includes("phasecapreached"))return"Phase fully minted.";
+  if(m.includes("soldout"))return"Sold out.";
+  if(m.includes("insufficientpayment"))return"Not enough ETH sent.";
+  if(m.includes("insufficient funds"))return"Insufficient ETH + gas.";
+  return e?.shortMessage||"Transaction failed.";}
+
+async function ensureChain(){const n=await provider.getNetwork();if(n.chainId===CHAIN_ID)return true;
+  try{await window.ethereum.request({method:"wallet_switchEthereumChain",params:[{chainId:CHAIN_ID_HEX}]});provider=new ethers.BrowserProvider(window.ethereum);return true;}catch{toast("Switch to Ethereum Mainnet.",true);return false;}}
+async function connect(){if(!window.ethereum){toast("No wallet found. Install MetaMask.",true);return;}
+  try{provider=new ethers.BrowserProvider(window.ethereum);await provider.send("eth_requestAccounts",[]);if(!(await ensureChain()))return;
+    signer=await provider.getSigner();account=await signer.getAddress();
+    const b=$("connectBtn");b.textContent=account.slice(0,6)+"…"+account.slice(-4);b.classList.add("connected");refresh();}
+  catch(e){toast(fmtErr(e),true);}}
+$("connectBtn").onclick=()=>{if(!account)connect();};
+if(window.ethereum){window.ethereum.on?.("accountsChanged",()=>location.reload());window.ethereum.on?.("chainChanged",()=>location.reload());}
+const w=()=>signer?new ethers.Contract(CONTRACT_ADDRESS,ABI,signer):null;
+
+async function doTx(fn,label){if(!signer){toast("Connect your wallet first.",true);return;}
+  try{const tx=await fn();toast("Confirming "+label+"…");await tx.wait();toast("✓ "+label+" done");refresh();}catch(e){toast(fmtErr(e),true);}}
+const pick=a=>doTx(()=>w().pickAnt(a,{value:antPickFee}),"pick");
+const mintNow=p=>doTx(()=>w().mint({value:p}),"mint");
+const keep=a=>doTx(()=>w()[a](),a);
+
+async function refresh(){
+  if(animating)return;
+  if(placeholder || !readC){$("pname").textContent="Coming soon";$("statusline").textContent=readC?"Paste the contract address into this file to go live.":"Live game data will appear here once the mint launches.";return;}
+  try{
+    const[phase,paused,pool,minted,remaining,fee,nextStart]=await Promise.all([
+      readC.currentPhase(),readC.paused(),readC.publicSupply(),readC.totalSupply(),readC.remainingSupply(),readC.antPickFee(),readC.nextPhaseStart()]);
+    antPickFee=fee;const ph=Number(phase);
+    $("sMinted").textContent=Number(minted).toLocaleString();
+    // detect new mints since last poll → notify + tick the gallery
+    const m=Number(minted);
+    if(window.__lastMinted!=null && m>window.__lastMinted){
+      const added=m-window.__lastMinted;
+      toast(added===1?`🎉 ANTEATER #${m} just minted!`:`🎉 ${added} new mints! Up to ANTEATER #${m}`);
+    }
+    window.__lastMinted=m; window.__mintedCount=m;
+    try{ markMintedThumbs(); }catch{}
+    try{ renderMintFeed(m); }catch{}
+    $("sRemaining").textContent=Number(remaining).toLocaleString();
+    $("sPool").textContent=Number(pool).toLocaleString();
+    $("sPhase").textContent=ph===0?"—":(ph===12?"PUB":ph+"/12");
+    try{const pp=await readC.publicPrice();const cell=document.getElementById("ladderPublicPrice");if(cell)cell.textContent=(pp===0n?"FREE":ethers.formatEther(pp)+" ETH");}catch{}
+    const pct=Math.min(100,Number(minted)/MAX_SUPPLY*100);$("pFill").style.width=pct+"%";$("pPct").textContent=pct.toFixed(1)+"% minted";
+    $("pauseBar").classList.toggle("show",paused);
+    if(ph===0){idle();return;}
+    const p=await readC.phases(phase), counts=await readC.antCounts(phase);
+    let mine=0,minted0=false;
+    if(account){mine=Number(await readC.pickedAnt(phase,account));minted0=await readC.hasMinted(phase,account);}
+    let drawReady=false; try{drawReady=await readC.drawReady();}catch{}
+    const price=await readC.phasePrice(phase);
+    await renderPhase(ph,p,counts,{mine,minted0,price,paused,nextStart,pool,drawReady});
+  }catch(e){console.error(e);$("statusline").textContent="Couldn't read the contract — check network/RPC.";}
+}
+function idle(){$("pname").textContent="Not started";$("ptag").style.display="none";$("statusline").textContent="The colony is asleep. Minting hasn't launched yet.";$("body").innerHTML="";$("keeper").style.display="none";}
+function tag(t,c){const e=$("ptag");e.textContent=t;e.className="ptag "+c;e.style.display="inline-block";}
+
+async function renderPhase(ph,p,counts,ctx){
+  const status=Number(p.status),survivor=Number(p.survivingAnt),body=$("body");$("keeper").style.display="none";
+
+  if(ph===1){
+    $("pname").textContent="Phase 1 — Free Mint";tag("Free · all welcome","free");
+    if(status===ST.Minting){
+      $("statusline").innerHTML=`Open to everyone · 1 per wallet · closes in <span class="timer">${cd(p.mintEnd)}</span>`;
+      body.innerHTML=`<button class="go free" id="mb" ${ctx.minted0||ctx.paused?"disabled":""}>${ctx.minted0?"MINTED ✓":"MINT FREE"}</button><p class="note">${ctx.minted0?'<span class="ok">You\'re in!</span>':"Free + gas only"}</p>`;
+      if(!ctx.minted0&&!ctx.paused)$("mb").onclick=()=>mintNow(0n);
+      maybeKeeper(ph,p,ctx);
+    }else closed(ph,p,ctx);return;
+  }
+  if(ph===12){
+    $("pname").textContent="Public Phase";tag("Public · all welcome","public");
+    if(status===ST.Minting){
+      const full=Number(p.minted)>=Number(p.capacity);
+      $("statusline").innerHTML=`Final open mint of all leftovers · ${ethers.formatEther(ctx.price)} ETH · ${Number(p.minted)}/${Number(p.capacity)}`;
+      body.innerHTML=`<button class="go mint" id="mb" ${ctx.minted0||full||ctx.paused?"disabled":""}>${ctx.minted0?"MINTED ✓":(full?"SOLD OUT":"MINT · "+ethers.formatEther(ctx.price)+" ETH")}</button><p class="note">${ctx.minted0?'<span class="ok">Minted!</span>':"No game — just mint"}</p>`;
+      if(!ctx.minted0&&!full&&!ctx.paused)$("mb").onclick=()=>mintNow(ctx.price);
+    }else $("statusline").textContent="Public phase complete.";return;
+  }
+
+  $("pname").textContent=`Phase ${ph} — The Game`;tag("Game · pick an ant","game");
+  if(status===ST.Selecting){
+    const feeTxt=antPickFee>0n?` · entry ${ethers.formatEther(antPickFee)} ETH`:"";
+    $("statusline").innerHTML=`Pick your ant${feeTxt} · closes in <span class="timer">${cd(p.selectEnd)}</span>`;
+    body.innerHTML="";body.appendChild(antGrid(counts,{mine:ctx.mine,paused:ctx.paused,mode:"select"}));
+    const n=document.createElement("p");n.className="note";
+    n.innerHTML=ctx.mine>0?`<span class="ok">Backing ${ANTS[ctx.mine-1].nm} — now survive the beast!</span>`:"Tap an ant to back it · one pick per wallet";
+    body.appendChild(n);maybeKeeper(ph,p,ctx);
+  }
+  else if(status===ST.Resolving){
+    $("statusline").innerHTML=`Selection closed — the draw is committed. The anteater feeds once the block lands…`;
+    body.innerHTML="";body.appendChild(pitView(counts,{mode:"prowl"}));
+    maybeKeeper(ph,p,ctx);
+  }
+  else if(status===ST.Minting){
+    if(!revealed.has(ph)){revealed.add(ph);await playEating(counts,survivor,ctx);}
+    renderResult(ph,p,counts,ctx,survivor);
+  }
+  else closed(ph,p,ctx);
+}
+
+function antGrid(counts,opt){
+  const g=document.createElement("div");g.className="ant-grid";
+  for(let i=0;i<5;i++){const ant=i+1,c=Number(counts[i]),full=c>=300,isMine=opt.mine===ant;
+    const card=document.createElement("div");card.className="ant-card"+(isMine?" mine":"");
+    const canPick=opt.mode==="select"&&opt.mine===0&&!full&&!opt.paused&&account;
+    if(opt.mode==="select"&&!canPick&&!isMine)card.classList.add("dis");
+    card.innerHTML=`${isMine?'<span class="chip-badge you">YOU</span>':''}${antSVG(i)}
+      <div class="ant-nm" style="color:${ANTS[i].c}">${ANTS[i].nm}</div>
+      <div class="ant-ct">${c}</div><div class="ant-cap">/ 300</div>
+      <div class="ant-bar"><i style="width:${Math.min(100,c/300*100)}%;background:${ANTS[i].c}"></i></div>`;
+    if(canPick)card.onclick=()=>pick(ant);
+    g.appendChild(card);}
+  return g;
+}
+
+function pitView(counts){
+  const wrap=document.createElement("div");wrap.className="pit";
+  const contestants=[];for(let i=0;i<5;i++)if(Number(counts[i])>0)contestants.push(i);
+  let chips=contestants.map(i=>`<div class="contestant" data-ant="${i+1}"><div class="crown-pop">👑</div>${antSVG(i)}<div class="cn">${ANTS[i].nm}</div></div>`).join("");
+  if(contestants.length===0)chips=`<div class="cn" style="color:#fff">No ants entered the hole this phase.</div>`;
+  wrap.innerHTML=`<div class="pit-title">🕳 THE HOLE</div><div class="arena"><div class="beast">${beastSVG()}</div>${chips}</div>`;
+  return wrap;
+}
+
+async function playEating(counts,survivor,ctx){
+  animating=true;
+  $("statusline").innerHTML=`The anteater feeds… last ant standing wins!`;
+  const body=$("body");body.innerHTML="";
+  const pit=pitView(counts);body.appendChild(pit);
+  const beast=pit.querySelector(".beast");
+  const losers=[];pit.querySelectorAll(".contestant").forEach(el=>{const a=Number(el.dataset.ant);if(a&&a!==survivor)losers.push(el);});
+  for(let i=losers.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[losers[i],losers[j]]=[losers[j],losers[i]];}
+  await delay(900);
+  for(const el of losers){beast&&beast.classList.add("chomp");el.classList.add("gulp");await delay(720);beast&&beast.classList.remove("chomp");await delay(120);}
+  const winEl=pit.querySelector(`.contestant[data-ant="${survivor}"]`);
+  if(winEl)winEl.classList.add("win");
+  await delay(900);
+  animating=false;
+}
+
+function renderResult(ph,p,counts,ctx,survivor){
+  const body=$("body");
+  const survived=ctx.mine>0&&ctx.mine===survivor;
+  $("statusline").innerHTML=`<b>${ANTS[survivor-1].nm} SURVIVED!</b> · backers mint · ${ethers.formatEther(ctx.price)} ETH · closes in <span class="timer">${cd(p.mintEnd)}</span>`;
+  body.innerHTML="";body.appendChild(pitView(counts));
+  const winEl=body.querySelector(`.contestant[data-ant="${survivor}"]`);if(winEl)winEl.classList.add("win");
+  if(ctx.minted0){body.insertAdjacentHTML("beforeend",`<p class="note ok">Minted ✓ — your ant made it!</p>`);}
+  else if(survived){body.insertAdjacentHTML("beforeend",`<button class="go mint" id="mb" ${ctx.paused?"disabled":""}>MINT · ${ethers.formatEther(ctx.price)} ETH</button><p class="note ok">Your ant survived — claim it!</p>`);if(!ctx.paused)$("mb").onclick=()=>mintNow(ctx.price);}
+  else{body.insertAdjacentHTML("beforeend",`<p class="note err">${ctx.mine>0?"Your ant got eaten 😋 — try next phase.":"You sat this one out."}</p>`);}
+  maybeKeeper(ph,p,ctx);
+}
+
+function maybeKeeper(ph,p,ctx){
+  const now=Math.floor(Date.now()/1000),s=Number(p.status);let action=null,msg=null,disabled=false;
+  if(s===ST.Selecting&&now>Number(p.selectEnd)){action="resolvePhase";msg="Selection ended. Anyone can commit the draw to a future block (step 1 of 2).";}
+  else if(s===ST.Resolving){action="drawSurvivor";
+    if(ctx.drawReady){msg="The committed block has landed. Anyone can reveal the surviving ant now (step 2 of 2).";}
+    else{msg="Draw committed — waiting a couple of blocks for the block hash. Try the reveal in ~30 seconds.";disabled=true;}}
+  else if(s===ST.Minting&&now>Number(p.mintEnd)){action="closePhase";msg="Mint window ended. Anyone can close this phase and pool the leftovers.";}
+  else if(s===ST.Closed){
+    if(ph<11&&now>=Number(ctx.nextStart)){action="openSelection";msg="Gap elapsed. Anyone can open the next phase's selection.";}
+    else if(ph===11&&now>=Number(ctx.nextStart)){action="openPublic";msg="Game over. Anyone can open the final public phase.";}
+  }
+  if(!action){$("keeper").style.display="none";return;}
+  $("keeper").style.display="block";$("keeperMsg").textContent=msg;
+  const b=$("keeperBtn");b.disabled=!signer||ctx.paused||disabled;b.textContent=action.replace(/([A-Z])/g," $1").replace(/^./,c=>c.toUpperCase());
+  b.onclick=()=>keep(action);
+}
+function closed(ph,p,ctx){$("statusline").textContent="Phase closed — waiting for the next phase to open.";$("body").innerHTML="";maybeKeeper(ph,p,ctx);}
+
+function startPolling(){if(pollTimer)clearInterval(pollTimer);let t=0;pollTimer=setInterval(()=>{if(animating)return;t++;if(t%15===0)refresh();},1000);}
+
+/* build the phase/price ladder (mirrors the contract: phase 1 free, +0.00005 ETH each, public = 0.00055) */
+function buildLadder(){
+  const step=0.00005, rows=[];
+  for(let p=1;p<=12;p++){
+    const price = p===1 ? "FREE" : (((p-1)*step).toFixed(5).replace(/0+$/,"").replace(/\.$/,"")+" ETH");
+    let type="Game", cls="";
+    if(p===1){type="Free mint";cls="free";}
+    else if(p===12){type="Public";cls="public";}
+    const label = p===12 ? "Public" : "Phase "+p;
+    const priceCell = p===12 ? `<td id="ladderPublicPrice">${price}</td>` : `<td>${price}</td>`;
+    rows.push(`<tr class="${cls}"><td>${label}</td><td>${type}</td>${priceCell}</tr>`);
+  }
+  const el=document.getElementById("ladderBody"); if(el) el.innerHTML=rows.join("");
+}
+
+/* features below are independent of the contract/ethers layer */
+/* ───── background crawlers: ants wandering behind the page ───── */
+function initCrawlers(){
+  const field=document.getElementById("antfield");
+  if(!field || !window.antSVG) return;
+  const COUNT = window.matchMedia("(max-width:780px)").matches ? 7 : 13;
+  const vw=()=>window.innerWidth, vh=()=>window.innerHeight;
+  function launch(el){
+    const ant = el.querySelector(".crawler-inner");
+    const rightward = Math.random()<0.5;
+    const startX = rightward ? -60 : vw()+60;
+    const endX   = rightward ? vw()+60 : -60;
+    const y0 = Math.random()*vh();
+    const drift = (Math.random()*2-1)*120;
+    const dur = 16000 + Math.random()*22000;
+    // face travel direction (antSVG faces left → flip when moving right)
+    ant.style.transform = `scaleX(${rightward?-1:1})`;
+    const anim = el.animate(
+      [
+        { transform:`translate(${startX}px, ${y0}px) rotate(0deg)` },
+        { transform:`translate(${(startX+endX)/2}px, ${y0+drift}px) rotate(${(Math.random()*8-4)}deg)`, offset:0.5 },
+        { transform:`translate(${endX}px, ${y0+drift*0.4}px) rotate(0deg)` }
+      ],
+      { duration:dur, easing:"linear" }
+    );
+    anim.onfinish=()=>launch(el);
+  }
+  for(let i=0;i<COUNT;i++){
+    const el=document.createElement("div"); el.className="crawler";
+    const inner=document.createElement("div"); inner.className="crawler-inner";
+    inner.innerHTML=antSVG(Math.floor(Math.random()*5));
+    el.appendChild(inner); field.appendChild(el);
+    // stagger starts
+    setTimeout(()=>launch(el), Math.random()*12000);
+  }
+}
+
+/* ───── ambient colony sound (synthesized, copyright-free, off by default) ───── */
+const Ambience=(function(){
+  let ctx=null, master=null, bedGain=null, skitterTimer=null, noiseBuf=null, on=false;
+  function build(){
+    ctx=new (window.AudioContext||window.webkitAudioContext)();
+    master=ctx.createGain(); master.gain.value=0; master.connect(ctx.destination);
+    // 2s white-noise buffer reused for bed + skitter grains
+    noiseBuf=ctx.createBuffer(1, ctx.sampleRate*2, ctx.sampleRate);
+    const d=noiseBuf.getChannelData(0);
+    for(let i=0;i<d.length;i++) d[i]=Math.random()*2-1;
+    // soft low rustle bed
+    const bed=ctx.createBufferSource(); bed.buffer=noiseBuf; bed.loop=true;
+    const lp=ctx.createBiquadFilter(); lp.type="lowpass"; lp.frequency.value=520;
+    bedGain=ctx.createGain(); bedGain.gain.value=0.015;
+    bed.connect(lp); lp.connect(bedGain); bedGain.connect(master); bed.start();
+  }
+  function grain(){ // a tiny skitter click
+    if(!ctx) return;
+    const s=ctx.createBufferSource(); s.buffer=noiseBuf;
+    const off=Math.random()*1.0; s.loopStart=off; // start somewhere in the buffer
+    const bp=ctx.createBiquadFilter(); bp.type="bandpass";
+    bp.frequency.value=1600+Math.random()*3200; bp.Q.value=6+Math.random()*8;
+    const g=ctx.createGain(); const t=ctx.currentTime;
+    const peak=0.03+Math.random()*0.05;
+    g.gain.setValueAtTime(0,t); g.gain.linearRampToValueAtTime(peak,t+0.005);
+    g.gain.exponentialRampToValueAtTime(0.0001,t+0.04+Math.random()*0.05);
+    s.connect(bp); bp.connect(g); g.connect(master);
+    s.start(t, off, 0.12); s.stop(t+0.16);
+  }
+  function scheduleSkitter(){
+    grain();
+    if(Math.random()<0.5) grain(); // sometimes overlapping = more "colony"
+    skitterTimer=setTimeout(scheduleSkitter, 70+Math.random()*180);
+  }
+  function start(){
+    if(!ctx) build();
+    if(ctx.state==="suspended") ctx.resume();
+    on=true;
+    master.gain.cancelScheduledValues(ctx.currentTime);
+    master.gain.linearRampToValueAtTime(0.5, ctx.currentTime+0.6); // master is a mixer; sub-gains keep it subtle
+    scheduleSkitter();
+  }
+  function stop(){
+    on=false;
+    if(skitterTimer){ clearTimeout(skitterTimer); skitterTimer=null; }
+    if(master&&ctx){ master.gain.cancelScheduledValues(ctx.currentTime); master.gain.linearRampToValueAtTime(0, ctx.currentTime+0.4); }
+  }
+  return { toggle(){ if(on){stop();return false;} else {start();return true;} } };
+})();
+function initSound(){
+  const b=document.getElementById("soundBtn");
+  if(!b) return;
+  b.onclick=()=>{
+    try{ const isOn=Ambience.toggle(); b.textContent=isOn?"🔊":"🔇"; }
+    catch(e){ toast("Sound unavailable in this browser.",true); }
+  };
+}
+
+/* ───── gallery: lazy-load all 3,300 in chunks as the user scrolls ───── */
+function initGallery(){
+  const TOTAL=MAX_SUPPLY, CHUNK=120;
+  const grid=document.getElementById("ggrid"), sentinel=document.getElementById("gsentinel"), countEl=document.getElementById("gcount");
+  if(!grid) return;
+  // shuffle the token ids so the colony appears in a random order each visit
+  const order=Array.from({length:TOTAL},(_,i)=>i+1);
+  for(let i=order.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[order[i],order[j]]=[order[j],order[i]];}
+  let loaded=0;
+  function imgURL(id){ return IMAGE_GATEWAY + IMAGES_CID + "/" + id + ".png"; }
+  function loadChunk(){
+    const end=Math.min(loaded+CHUNK, TOTAL);
+    const frag=document.createDocumentFragment();
+    for(let k=loaded; k<end; k++){
+      const id=order[k];
+      const d=document.createElement("div");
+      d.className="gthumb"; d.dataset.id=id;
+      d.innerHTML=`<img loading="lazy" decoding="async" src="${imgURL(id)}" alt="ANTEATER #${id}"/><span class="gid">#${id}</span><span class="tick">✓</span>`;
+      d.onclick=()=>openLightbox(id);
+      frag.appendChild(d);
+    }
+    grid.appendChild(frag);
+    loaded=end;
+    countEl.textContent=`Showing ${loaded.toLocaleString()} of ${TOTAL.toLocaleString()}`;
+    markMintedThumbs(); // tick any freshly-rendered ones that are already minted
+    if(loaded>=TOTAL && io){ io.disconnect(); }
+  }
+  const io=new IntersectionObserver((entries)=>{
+    if(entries.some(e=>e.isIntersecting)) loadChunk();
+  },{rootMargin:"600px"});
+  io.observe(sentinel);
+  loadChunk(); // first batch immediately
+
+  // lightbox
+  const lb=document.getElementById("lightbox"), lbimg=document.getElementById("lbimg"),
+        lbtitle=document.getElementById("lbtitle"), lblink=document.getElementById("lblink"), lbclose=document.getElementById("lbclose");
+  window.openLightbox=function(id){
+    lbimg.src=imgURL(id); lbimg.alt="ANTEATER #"+id;
+    const mintedNow = id<=window.__mintedCount;
+    lbtitle.innerHTML="ANTEATER #"+id+(mintedNow?' <span style="color:var(--good)">· Minted ✓</span>':' <span style="color:var(--grape)">· Available</span>');
+    lblink.href=`https://opensea.io/assets/ethereum/${CONTRACT_ADDRESS}/${id}`;
+    lb.classList.add("show");
+  };
+  function close(){ lb.classList.remove("show"); lbimg.src=""; }
+  lbclose.onclick=close;
+  lb.onclick=(e)=>{ if(e.target===lb) close(); };
+  document.addEventListener("keydown",(e)=>{ if(e.key==="Escape") close(); });
+}
+
+/* tokens mint sequentially (id 1..totalSupply), so ids <= minted count are minted */
+window.__mintedCount = 0;
+window.__feedSeen = 0;
+function markMintedThumbs(){
+  const n=window.__mintedCount||0;
+  document.querySelectorAll(".gthumb:not(.minted)").forEach(el=>{
+    if(Number(el.dataset.id)<=n) el.classList.add("minted");
+  });
+}
+function renderMintFeed(total){
+  const row=document.getElementById("mintFeed"); if(!row) return;
+  if(!total || total<1){ row.innerHTML='<span class="feed-empty">No mints yet — be the first ant in the colony!</span>'; return; }
+  const N=12, gw=IMAGE_GATEWAY+IMAGES_CID+"/";
+  let html="";
+  for(let id=total; id>Math.max(0,total-N); id--){
+    const isNew = id>window.__feedSeen;
+    html+=`<div class="feed-item ${isNew?'pop':''}"><div class="ft"><img loading="lazy" decoding="async" src="${gw}${id}.png" alt="ANTEATER #${id}"/><span class="fchk">✓</span></div><div class="fid">#${id}</div></div>`;
+  }
+  row.innerHTML=html;
+  window.__feedSeen=total;
+}
+
+/* each feature is isolated so one failing can never blank the others */
+function safe(fn){ try{ fn(); }catch(e){ console.error("feature error:",e); } }
+safe(buildLadder);
+safe(initCrawlers);
+safe(initSound);
+safe(initGallery);
+/* ═══════════ CUSTOMIZE STUDIO ═══════════ */
+(function(){
+  const CATS=["Background","Body","Eyes","Outfits"];
+  const KEY=(READ_RPC.split("/v2/")[1]||"");
+  const NFT_BASE="https://eth-mainnet.g.alchemy.com/nft/v3/"+KEY;
+  const META_GW=IMAGE_GATEWAY+METADATA_CID+"/";
+  const IMG_GW=IMAGE_GATEWAY+IMAGES_CID+"/";
+  const cv=document.getElementById("studioCanvas"); if(!cv) return;
+  const ctx=cv.getContext("2d");
+  const imgCache={};
+  function loadImg(uri){return imgCache[uri]||(imgCache[uri]=new Promise((res,rej)=>{const i=new Image();i.crossOrigin="anonymous";i.onload=()=>res(i);i.onerror=rej;i.src=uri;}));}
+  function layerUri(cat,name){const arr=(window.LAYERS||{})[cat]||[];const m=arr.find(x=>x.name===name)||arr.find(x=>x.name.toLowerCase()===String(name||"").toLowerCase());return m?m.uri:null;}
+
+  const state={tokenId:null,orig:{},traits:{Background:null,Body:null,Eyes:null,Outfits:null},
+    fx:{hue:0,sat:100,bri:100,con:100,inv:0},frame:"none",frameColor:"#7c6cf0",
+    cap:{text:"",color:"#ffffff",size:44,pos:"bottom"},stickers:[],sel:-1};
+
+  function fxString(){const f=state.fx;return `hue-rotate(${f.hue}deg) saturate(${f.sat}%) brightness(${f.bri}%) contrast(${f.con}%) invert(${f.inv}%)`;}
+
+  async function render(){
+    ctx.clearRect(0,0,512,512);
+    // composite ant on offscreen (no filter), then draw with filter
+    const off=document.createElement("canvas");off.width=off.height=512;const oc=off.getContext("2d");
+    for(const cat of CATS){const uri=layerUri(cat,state.traits[cat]);if(!uri)continue;try{const im=await loadImg(uri);oc.drawImage(im,0,0,512,512);}catch(e){}}
+    ctx.save();ctx.filter=fxString();ctx.drawImage(off,0,0);ctx.restore();
+    // frame
+    drawFrame();
+    // stickers
+    for(const s of state.stickers){ctx.font=s.size+"px serif";ctx.textAlign="center";ctx.textBaseline="middle";ctx.fillText(s.e,s.x,s.y);}
+    // caption
+    if(state.cap.text){ctx.save();ctx.font="700 "+state.cap.size+"px 'Space Grotesk',sans-serif";ctx.textAlign="center";ctx.textBaseline="middle";
+      const y=state.cap.pos==="top"?44:state.cap.pos==="mid"?256:512-40;
+      ctx.lineWidth=Math.max(4,state.cap.size/7);ctx.strokeStyle="#241b40";ctx.strokeText(state.cap.text,256,y);
+      ctx.fillStyle=state.cap.color;ctx.fillText(state.cap.text,256,y);ctx.restore();}
+  }
+  function drawFrame(){const c=state.frameColor;if(state.frame==="none")return;ctx.save();
+    if(state.frame==="solid"){ctx.lineWidth=28;ctx.strokeStyle=c;ctx.strokeRect(14,14,512-28,512-28);}
+    else if(state.frame==="round"){ctx.lineWidth=24;ctx.strokeStyle=c;const r=40,p=14,w=512-28;ctx.beginPath();ctx.moveTo(p+r,p);ctx.arcTo(p+w,p,p+w,p+w,r);ctx.arcTo(p+w,p+w,p,p+w,r);ctx.arcTo(p,p+w,p,p,r);ctx.arcTo(p,p,p+w,p,r);ctx.closePath();ctx.stroke();}
+    else if(state.frame==="glow"){ctx.shadowColor=c;ctx.shadowBlur=40;ctx.lineWidth=18;ctx.strokeStyle=c;ctx.strokeRect(20,20,512-40,512-40);}
+    else if(state.frame==="dashed"){ctx.lineWidth=16;ctx.strokeStyle=c;ctx.setLineDash([26,18]);ctx.strokeRect(16,16,512-32,512-32);}
+    ctx.restore();}
+
+  // ---- build trait selector UI ----
+  function buildTraitPanel(){const host=document.getElementById("panelTraits");host.innerHTML="";
+    for(const cat of CATS){const arr=(window.LAYERS||{})[cat]||[];
+      const row=document.createElement("div");row.className="trait-row";
+      row.innerHTML=`<div class="lbl">${cat}</div>`;
+      const opts=document.createElement("div");opts.className="opts";
+      arr.forEach(it=>{const o=document.createElement("div");o.className="opt"+(state.traits[cat]===it.name?" sel":"");o.title=it.name;
+        o.innerHTML=`<img src="${it.uri}" alt="${it.name}">`;o.onclick=()=>{state.traits[cat]=it.name;markSel(opts,o);render();};opts.appendChild(o);});
+      row.appendChild(opts);host.appendChild(row);}
+  }
+  function markSel(container,el){[...container.children].forEach(c=>c.classList.remove("sel"));el.classList.add("sel");}
+
+  // ---- tabs ----
+  document.querySelectorAll(".stab").forEach(t=>t.onclick=()=>{
+    document.querySelectorAll(".stab").forEach(x=>x.classList.remove("on"));t.classList.add("on");
+    document.querySelectorAll(".spanel").forEach(p=>p.classList.toggle("on",p.dataset.panel===t.dataset.tab));});
+
+  // ---- effects ----
+  const fxMap={hue:"fxHue",sat:"fxSat",bri:"fxBri",con:"fxCon",inv:"fxInv"};
+  Object.entries(fxMap).forEach(([k,id])=>{const el=document.getElementById(id);el.oninput=()=>{state.fx[k]=+el.value;render();};});
+  const presets={reset:{hue:0,sat:100,bri:100,con:100,inv:0},neon:{hue:300,sat:240,bri:115,con:130,inv:0},
+    dream:{hue:330,sat:140,bri:110,con:95,inv:0},mono:{hue:0,sat:0,bri:105,con:115,inv:0},
+    vapor:{hue:250,sat:180,bri:110,con:105,inv:0},gold:{hue:35,sat:200,bri:110,con:115,inv:0}};
+  document.querySelectorAll('[data-fx]').forEach(c=>c.onclick=()=>{const p=presets[c.dataset.fx];state.fx={...p};
+    document.querySelectorAll('[data-fx]').forEach(x=>x.classList.remove("on"));c.classList.add("on");
+    document.getElementById("fxHue").value=p.hue;document.getElementById("fxSat").value=p.sat;document.getElementById("fxBri").value=p.bri;document.getElementById("fxCon").value=p.con;document.getElementById("fxInv").value=p.inv;render();});
+
+  // ---- frame ----
+  document.querySelectorAll('[data-frame]').forEach(c=>c.onclick=()=>{state.frame=c.dataset.frame;
+    document.querySelectorAll('[data-frame]').forEach(x=>x.classList.remove("on"));c.classList.add("on");render();});
+  document.getElementById("frameColor").oninput=e=>{state.frameColor=e.target.value;render();};
+
+  // ---- text ----
+  document.getElementById("capText").oninput=e=>{state.cap.text=e.target.value;render();};
+  document.getElementById("capColor").oninput=e=>{state.cap.color=e.target.value;render();};
+  document.getElementById("capSize").oninput=e=>{state.cap.size=+e.target.value;render();};
+  document.querySelectorAll('[data-pos]').forEach(c=>c.onclick=()=>{state.cap.pos=c.dataset.pos;
+    document.querySelectorAll('[data-pos]').forEach(x=>x.classList.remove("on"));c.classList.add("on");render();});
+
+  // ---- stickers ----
+  const EMO=["🐜","👑","🔥","💎","🕶️","🎩","⭐","💀","🌈","❤️","💜","⚡","🍄","🎉","👽","🥇"];
+  const pal=document.getElementById("stickerPalette");
+  EMO.forEach(e=>{const b=document.createElement("div");b.className="sticker-btn";b.textContent=e;
+    b.onclick=()=>{state.stickers.push({e,x:256,y:256,size:+document.getElementById("stkSize").value});state.sel=state.stickers.length-1;render();};pal.appendChild(b);});
+  document.getElementById("stkSize").oninput=e=>{if(state.sel>=0&&state.stickers[state.sel]){state.stickers[state.sel].size=+e.target.value;render();}};
+  document.getElementById("stkRemove").onclick=()=>{state.stickers.pop();state.sel=state.stickers.length-1;render();};
+  document.getElementById("stkClear").onclick=()=>{state.stickers=[];state.sel=-1;render();};
+  // drag stickers
+  let drag=false;
+  function pos(ev){const r=cv.getBoundingClientRect();const t=ev.touches?ev.touches[0]:ev;return{x:(t.clientX-r.left)/r.width*512,y:(t.clientY-r.top)/r.height*512};}
+  function pick(p){for(let i=state.stickers.length-1;i>=0;i--){const s=state.stickers[i];if(Math.hypot(p.x-s.x,p.y-s.y)<s.size*0.7)return i;}return -1;}
+  function down(ev){const p=pos(ev);const i=pick(p);if(i>=0){state.sel=i;drag=true;ev.preventDefault();}}
+  function move(ev){if(!drag||state.sel<0)return;const p=pos(ev);state.stickers[state.sel].x=p.x;state.stickers[state.sel].y=p.y;render();ev.preventDefault();}
+  function up(){drag=false;}
+  cv.addEventListener("mousedown",down);window.addEventListener("mousemove",move);window.addEventListener("mouseup",up);
+  cv.addEventListener("touchstart",down,{passive:false});cv.addEventListener("touchmove",move,{passive:false});cv.addEventListener("touchend",up);
+
+  // ---- download / share / reset ----
+  document.getElementById("dlBtn").onclick=()=>{const a=document.createElement("a");a.download=`ANTEATER-${state.tokenId||"custom"}.png`;a.href=cv.toDataURL("image/png");a.click();};
+  document.getElementById("shareBtn").onclick=()=>{
+    const txt=`I customized my ANTEATER #${state.tokenId} 🐜 @surviveanteater`;
+    window.open("https://x.com/intent/tweet?text="+encodeURIComponent(txt),"_blank");
+    toast("Tweet opened — attach your downloaded image to the post.");
+  };
+  document.getElementById("resetBtn").onclick=()=>{state.traits={...state.orig};state.fx={hue:0,sat:100,bri:100,con:100,inv:0};state.frame="none";state.cap={text:"",color:"#ffffff",size:44,pos:"bottom"};state.stickers=[];state.sel=-1;
+    document.getElementById("capText").value="";["fxHue","fxSat","fxBri","fxCon","fxInv"].forEach((id,i)=>document.getElementById(id).value=[0,100,100,100,0][i]);
+    buildTraitPanel();render();};
+
+  // ---- load owned ants ----
+  async function tokenTraits(id){
+    try{const r=await fetch(META_GW+id+".json");const j=await r.json();const o={};(j.attributes||[]).forEach(a=>{o[a.trait_type]=a.value;});return o;}
+    catch(e){return null;}
+  }
+  async function selectToken(id){
+    document.getElementById("studioMsg").textContent="Loading #"+id+"…";
+    const tr=await tokenTraits(id)||{};
+    CATS.forEach(c=>{state.traits[c]=tr[c]!=null?tr[c]:( (window.LAYERS[c]||[])[0]||{}).name;});
+    state.orig={...state.traits};state.tokenId=id;
+    document.querySelectorAll(".stoken").forEach(el=>el.classList.toggle("sel",el.dataset.id===String(id)));
+    buildTraitPanel();await render();
+    document.getElementById("studioMsg").textContent="Editing #"+id;
+  }
+  async function loadOwned(){
+    const msg=document.getElementById("studioMsg");
+    try{
+      if(!account){ await connect(); }
+      if(!account){ msg.textContent="Connect your wallet to continue."; return; }
+      msg.textContent="Finding your ANTEATERs…";
+      const url=NFT_BASE+"/getNFTsForOwner?owner="+account+"&contractAddresses[]="+CONTRACT_ADDRESS+"&withMetadata=false&pageSize=100";
+      const r=await fetch(url);const j=await r.json();
+      const ids=(j.ownedNfts||[]).map(n=>parseInt(n.tokenId)).filter(n=>!isNaN(n)).sort((a,b)=>a-b);
+      if(!ids.length){ msg.textContent="No ANTEATERs found in this wallet yet. Mint one first!"; return; }
+      const host=document.getElementById("studioTokens");host.innerHTML="";
+      ids.forEach(id=>{const d=document.createElement("div");d.className="stoken";d.dataset.id=id;
+        d.innerHTML=`<img loading="lazy" src="${IMG_GW+id}.png" alt="#${id}"><span class="sn">#${id}</span>`;
+        d.onclick=()=>selectToken(id);host.appendChild(d);});
+      document.getElementById("studioConnect").style.display="none";
+      document.getElementById("studioMain").style.display="block";
+      await selectToken(ids[0]);
+    }catch(e){console.error(e);msg.textContent="Couldn't load your ANTs — make sure you're on the official site URL.";}
+  }
+  document.getElementById("studioLoadBtn").onclick=loadOwned;
+})();
+
+safe(()=>{ refresh(); startPolling(); });
+</script>
+</body>
+</html>
